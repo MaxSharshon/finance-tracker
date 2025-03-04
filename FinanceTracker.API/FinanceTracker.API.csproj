@@ -17,10 +17,6 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Controllers\" />
-    </ItemGroup>
-
-    <ItemGroup>
       <ProjectReference Include="..\FinanceTracker.BusinessLogic\FinanceTracker.BusinessLogic.csproj" />
       <ProjectReference Include="..\FinanceTracker.DataAccess\FinanceTracker.DataAccess.csproj" />
     </ItemGroup>

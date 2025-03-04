@@ -1,3 +1,5 @@
+using FinanceTracker.BusinessLogic.Services;
+using FinanceTracker.BusinessLogic.Services.Interfaces;
 using FinanceTracker.BusinessLogic.Validators;
 using FinanceTracker.DataAccess;
 using FinanceTracker.DataAccess.Repositories;
@@ -13,6 +15,7 @@ builder.Services.AddDbContext<FinanceTrackerContext>(options =>
 builder.Services.AddScoped<IFinancialOperationRepository, FinancialOperationRepository>();
 builder.Services.AddScoped<IBalanceChangeRepository, BalanceChangeRepository>();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+builder.Services.AddScoped<IBalanceChangeService, BalanceChangeService>();
 
 builder.Services.AddValidatorsFromAssemblyContaining<FinancialOperationValidator>();
 builder.Services.AddValidatorsFromAssemblyContaining<BalanceChangeValidator>();
