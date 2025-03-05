@@ -1,3 +1,5 @@
+using FinanceTracker.BusinessLogic.Services;
+using FinanceTracker.BusinessLogic.Services.Interfaces;
 using FinanceTracker.BusinessLogic.Validators;
 using FinanceTracker.DataAccess;
 using FinanceTracker.DataAccess.Repositories;
@@ -13,20 +15,22 @@ builder.Services.AddDbContext<FinanceTrackerContext>(options =>
 builder.Services.AddScoped<IFinancialOperationRepository, FinancialOperationRepository>();
 builder.Services.AddScoped<IBalanceChangeRepository, BalanceChangeRepository>();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+builder.Services.AddScoped<IBalanceChangeService, BalanceChangeService>();
 
 builder.Services.AddValidatorsFromAssemblyContaining<FinancialOperationValidator>();
 builder.Services.AddValidatorsFromAssemblyContaining<BalanceChangeValidator>();
 
 builder.Services.AddControllers();
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-builder.Services.AddOpenApi();
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-    app.MapOpenApi();
+    app.UseSwagger();
+    app.UseSwaggerUI();
 }
 
 app.UseHttpsRedirection();
