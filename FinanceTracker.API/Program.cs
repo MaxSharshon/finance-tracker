@@ -1,3 +1,5 @@
+using FinanceTracker.API.Mapping;
+using FinanceTracker.BusinessLogic.Mapping;
 using FinanceTracker.BusinessLogic.Services;
 using FinanceTracker.BusinessLogic.Services.Interfaces;
 using FinanceTracker.BusinessLogic.Validators;
@@ -19,6 +21,8 @@ builder.Services.AddScoped<IBalanceChangeService, BalanceChangeService>();
 
 builder.Services.AddValidatorsFromAssemblyContaining<FinancialOperationValidator>();
 builder.Services.AddValidatorsFromAssemblyContaining<BalanceChangeValidator>();
+
+builder.Services.AddAutoMapper(typeof(ApiMapper), typeof(BusinessLogicMapper));
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();

@@ -1,19 +1,21 @@
-﻿using FinanceTracker.BusinessLogic.Services.Interfaces;
-using FinanceTracker.Core.Models;
+﻿using AutoMapper;
+using FinanceTracker.API.Contracts;
+using FinanceTracker.BusinessLogic.DTOs;
+using FinanceTracker.BusinessLogic.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FinanceTracker.API.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
-public class BalanceChangeController(IBalanceChangeService balanceChangeService) : ControllerBase
+public class BalanceChangeController(IBalanceChangeService balanceChangeService, IMapper mapper) : ControllerBase
 {
     [HttpGet]
     public IActionResult GetAll()
     {
         try
         {
-            return Ok(balanceChangeService.GetAll());
+            return Ok(mapper.Map<IEnumerable<BalanceChangeResponse>>(balanceChangeService.GetAll()));
         }
         catch (Exception ex)
         {
@@ -26,7 +28,7 @@ public class BalanceChangeController(IBalanceChangeService balanceChangeService)
     {
         try
         {
-            return Ok(balanceChangeService.GetById(id));
+            return Ok(mapper.Map<BalanceChangeResponse>(balanceChangeService.GetById(id)));
         }
         catch (KeyNotFoundException ex)
         {
@@ -39,14 +41,16 @@ public class BalanceChangeController(IBalanceChangeService balanceChangeService)
     }
 
     [HttpPost]
-    public IActionResult Create([FromBody] BalanceChange balanceChange)
+    public IActionResult Create([FromBody] BalanceChangeRequest request)
     {
         if (!ModelState.IsValid) return BadRequest(ModelState);
         
         try
         {
-            balanceChangeService.Add(balanceChange);
-            return CreatedAtAction(nameof(GetById), new { id = balanceChange.Id }, balanceChange);
+            var balanceChangeDto = mapper.Map<BalanceChangeDto>(request);
+            balanceChangeDto.Id = balanceChangeService.Add(balanceChangeDto);
+            return CreatedAtAction(nameof(GetById), new { id = balanceChangeDto.Id },
+                mapper.Map<BalanceChangeResponse>(balanceChangeDto));
         }
         catch (InvalidOperationException ex)
         {
@@ -59,21 +63,18 @@ public class BalanceChangeController(IBalanceChangeService balanceChangeService)
     }
 
     [HttpPut("{id}")]
-    public IActionResult Update(Guid id, [FromBody] BalanceChange balanceChange)
+    public IActionResult Update(Guid id, [FromBody] BalanceChangeRequest request)
     {
         if (!ModelState.IsValid)
         {
             return BadRequest(ModelState);
         }
-
-        if (balanceChange.Id != id)
-        {
-            return BadRequest("ID mismatch");
-        }
-
+        
         try
         {
-            balanceChangeService.Update(balanceChange);
+            var balanceChangeDto = mapper.Map<BalanceChangeDto>(request);
+            balanceChangeDto.Id = id;
+            balanceChangeService.Update(balanceChangeDto);
             return NoContent();
         }
         catch (KeyNotFoundException ex)
