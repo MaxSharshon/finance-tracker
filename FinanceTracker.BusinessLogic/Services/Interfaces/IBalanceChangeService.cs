@@ -1,12 +1,13 @@
-﻿using FinanceTracker.Core.Models;
+﻿using FinanceTracker.BusinessLogic.DTOs;
+using FinanceTracker.Core.Models;
 
 namespace FinanceTracker.BusinessLogic.Services.Interfaces;
 
 public interface IBalanceChangeService
 {
-    IEnumerable<BalanceChange> GetAll();
-    BalanceChange GetById(Guid id);
-    void Add(BalanceChange balanceChange);
-    void Update(BalanceChange balanceChange);
+    IEnumerable<BalanceChangeDto> GetAll();
+    BalanceChangeDto GetById(Guid id);
+    Guid Add(BalanceChangeDto balanceChangeDto);
+    void Update(BalanceChangeDto balanceChangeDto);
     void Remove(Guid id);
 }

@@ -1,26 +1,32 @@
-﻿using FinanceTracker.BusinessLogic.Services.Interfaces;
+﻿using AutoMapper;
+using FinanceTracker.BusinessLogic.DTOs;
+using FinanceTracker.BusinessLogic.Services.Interfaces;
 using FinanceTracker.Core.Models;
 using FinanceTracker.DataAccess.Repositories.Interfaces;
+using FluentValidation;
 
 namespace FinanceTracker.BusinessLogic.Services;
 
-public class BalanceChangeService(IUnitOfWork unitOfWork) : IBalanceChangeService
+public class BalanceChangeService(IUnitOfWork unitOfWork, IMapper mapper, IValidator<BalanceChange> validator)
+    : IBalanceChangeService
 {
-    public IEnumerable<BalanceChange> GetAll() => unitOfWork.BalanceChanges.GetAll();
+    public IEnumerable<BalanceChangeDto> GetAll() => 
+        mapper.Map<IEnumerable<BalanceChangeDto>>(unitOfWork.BalanceChanges.GetAll());
 
-    public BalanceChange GetById(Guid id)
-    {
-        return unitOfWork.BalanceChanges.Get(id)
-               ?? throw new KeyNotFoundException($"{nameof(BalanceChange)} with ID {id} not found.");
-    }
+    public BalanceChangeDto GetById(Guid id) => 
+        mapper.Map<BalanceChangeDto>(GetEntityById(id));
 
-    public void Add(BalanceChange balanceChange)
+    public Guid Add(BalanceChangeDto balanceChangeDto)
     {
-        var exists = unitOfWork.BalanceChanges.Find(bc =>
+        var balanceChange = mapper.Map<BalanceChange>(balanceChangeDto);
+        
+        Validate(balanceChange);
+        
+        var isExists = unitOfWork.BalanceChanges.Find(bc =>
             bc.OperationType == balanceChange.OperationType 
             && bc.Amount == balanceChange.Amount).Any();
 
-        if (exists)
+        if (isExists)
         {
             throw new InvalidOperationException(
                 $"A {nameof(BalanceChange)} with the same {nameof(BalanceChange.OperationType)} and " +
@@ -29,20 +35,36 @@ public class BalanceChangeService(IUnitOfWork unitOfWork) : IBalanceChangeServic
         
         unitOfWork.BalanceChanges.Add(balanceChange);
         unitOfWork.Complete();
+        
+        return balanceChange.Id;
     }
 
-    public void Update(BalanceChange balanceChange)
+    public void Update(BalanceChangeDto balanceChangeDto)
     {
-        var existing = GetById(balanceChange.Id);
-        existing.OperationType = balanceChange.OperationType;
-        existing.Amount = balanceChange.Amount;
-
+        var existingBalanceChange = GetEntityById(balanceChangeDto.Id);
+        mapper.Map(balanceChangeDto, existingBalanceChange);
+        Validate(existingBalanceChange);
         unitOfWork.Complete();
     }
 
     public void Remove(Guid id)
     {
-        unitOfWork.BalanceChanges.Remove(GetById(id));
+        unitOfWork.BalanceChanges.Remove(GetEntityById(id));
         unitOfWork.Complete();
+    }
+
+    private BalanceChange GetEntityById(Guid id)
+    {
+        return unitOfWork.BalanceChanges.Get(id) ??
+               throw new KeyNotFoundException($"{nameof(BalanceChange)} with ID {id} not found.");
+    }
+
+    private void Validate(BalanceChange balanceChange)
+    {
+        var result = validator.Validate(balanceChange);
+        if (result.IsValid) return;
+        
+        var errors = string.Join(',', result.Errors.Select(e => e.ErrorMessage));
+        throw new ValidationException($"Validation failed: {errors}");
     }
 }
