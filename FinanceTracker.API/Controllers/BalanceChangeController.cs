@@ -15,7 +15,7 @@ public class BalanceChangeController(IBalanceChangeService balanceChangeService,
     {
         try
         {
-            return Ok(mapper.Map<IEnumerable<BalanceChangeResponse>>(balanceChangeService.GetAll()));
+            return Ok(mapper.Map<IEnumerable<BalanceChangeResponse>>(balanceChangeService.GetAllAsync()));
         }
         catch (Exception ex)
         {
@@ -41,14 +41,14 @@ public class BalanceChangeController(IBalanceChangeService balanceChangeService,
     }
 
     [HttpPost]
-    public IActionResult Create([FromBody] BalanceChangeRequest request)
+    public async Task<IActionResult> CreateAsync([FromBody] BalanceChangeRequest request)
     {
         if (!ModelState.IsValid) return BadRequest(ModelState);
         
         try
         {
             var balanceChangeDto = mapper.Map<BalanceChangeDto>(request);
-            balanceChangeDto.Id = balanceChangeService.Add(balanceChangeDto);
+            balanceChangeDto.Id = await balanceChangeService.AddAsync(balanceChangeDto);
             return CreatedAtAction(nameof(GetById), new { id = balanceChangeDto.Id },
                 mapper.Map<BalanceChangeResponse>(balanceChangeDto));
         }
@@ -74,7 +74,7 @@ public class BalanceChangeController(IBalanceChangeService balanceChangeService,
         {
             var balanceChangeDto = mapper.Map<BalanceChangeDto>(request);
             balanceChangeDto.Id = id;
-            balanceChangeService.Update(balanceChangeDto);
+            balanceChangeService.UpdateAsync(balanceChangeDto);
             return NoContent();
         }
         catch (KeyNotFoundException ex)
@@ -92,7 +92,7 @@ public class BalanceChangeController(IBalanceChangeService balanceChangeService,
     {
         try
         {
-            balanceChangeService.Remove(id);
+            balanceChangeService.RemoveAsync(id);
             return NoContent();
         }
         catch (KeyNotFoundException ex)

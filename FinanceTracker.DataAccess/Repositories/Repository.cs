@@ -8,29 +8,29 @@ public class Repository<TEntity>(DbContext context) : IRepository<TEntity> where
 {
     protected readonly DbContext Context = context;
 
-    public TEntity? Get(Guid id)
+    public async Task<TEntity?> GetAsync(Guid id)
     {
-        return Context.Set<TEntity>().Find(id);
+        return await Context.Set<TEntity>().FindAsync(id);
     }
 
-    public IEnumerable<TEntity> GetAll()
+    public async Task<IEnumerable<TEntity>> GetAllAsync()
     {
-        return Context.Set<TEntity>().ToList();
+        return await Context.Set<TEntity>().ToListAsync();
     }
 
-    public IEnumerable<TEntity> Find(Expression<Func<TEntity, bool>> predicate)
+    public async Task<IEnumerable<TEntity>> FindAsync(Expression<Func<TEntity, bool>> predicate)
     {
-        return Context.Set<TEntity>().Where(predicate);
+        return await Context.Set<TEntity>().Where(predicate).ToListAsync();
     }
 
-    public void Add(TEntity entity)
+    public async Task AddAsync(TEntity entity)
     {
-        Context.Set<TEntity>().Add(entity);
+        await Context.Set<TEntity>().AddAsync(entity);
     }
 
-    public void AddRange(IEnumerable<TEntity> entities)
+    public async Task AddRangeAsync(IEnumerable<TEntity> entities)
     {
-        Context.Set<TEntity>().AddRange(entities);
+        await Context.Set<TEntity>().AddRangeAsync(entities);
     }
 
     public void Remove(TEntity entity)
