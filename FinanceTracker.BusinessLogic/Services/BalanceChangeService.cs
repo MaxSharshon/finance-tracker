@@ -34,7 +34,7 @@ public class BalanceChangeService(IUnitOfWork unitOfWork, IMapper mapper, IValid
         }
         
         await unitOfWork.BalanceChanges.AddAsync(balanceChange);
-        unitOfWork.CompleteAsync();
+        await unitOfWork.CompleteAsync();
         
         return balanceChange.Id;
     }
@@ -44,7 +44,7 @@ public class BalanceChangeService(IUnitOfWork unitOfWork, IMapper mapper, IValid
         var existingBalanceChange = await GetEntityByIdAsync(balanceChangeDto.Id);
         mapper.Map(balanceChangeDto, existingBalanceChange);
         Validate(existingBalanceChange);
-        await unitOfWork.CompleteAsync();
+        unitOfWork.CompleteAsync();
     }
 
     public async Task RemoveAsync(Guid id)

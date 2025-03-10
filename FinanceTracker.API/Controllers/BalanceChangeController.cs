@@ -11,11 +11,11 @@ namespace FinanceTracker.API.Controllers;
 public class BalanceChangeController(IBalanceChangeService balanceChangeService, IMapper mapper) : ControllerBase
 {
     [HttpGet]
-    public IActionResult GetAll()
+    public async Task<IActionResult> GetAll()
     {
         try
         {
-            return Ok(mapper.Map<IEnumerable<BalanceChangeResponse>>(balanceChangeService.GetAllAsync()));
+            return Ok(mapper.Map<IEnumerable<BalanceChangeResponse>>(await balanceChangeService.GetAllAsync()));
         }
         catch (Exception ex)
         {
@@ -24,11 +24,11 @@ public class BalanceChangeController(IBalanceChangeService balanceChangeService,
     }
 
     [HttpGet("{id}")]
-    public IActionResult GetById(Guid id)
+    public async Task<IActionResult> GetById(Guid id)
     {
         try
         {
-            return Ok(mapper.Map<BalanceChangeResponse>(balanceChangeService.GetById(id)));
+            return Ok(mapper.Map<BalanceChangeResponse>(await balanceChangeService.GetById(id)));
         }
         catch (KeyNotFoundException ex)
         {
@@ -63,7 +63,7 @@ public class BalanceChangeController(IBalanceChangeService balanceChangeService,
     }
 
     [HttpPut("{id}")]
-    public IActionResult Update(Guid id, [FromBody] BalanceChangeRequest request)
+    public async Task<IActionResult> Update(Guid id, [FromBody] BalanceChangeRequest request)
     {
         if (!ModelState.IsValid)
         {
@@ -74,7 +74,7 @@ public class BalanceChangeController(IBalanceChangeService balanceChangeService,
         {
             var balanceChangeDto = mapper.Map<BalanceChangeDto>(request);
             balanceChangeDto.Id = id;
-            balanceChangeService.UpdateAsync(balanceChangeDto);
+            await balanceChangeService.UpdateAsync(balanceChangeDto);
             return NoContent();
         }
         catch (KeyNotFoundException ex)
@@ -88,11 +88,11 @@ public class BalanceChangeController(IBalanceChangeService balanceChangeService,
     }
 
     [HttpDelete("{id}")]
-    public IActionResult Delete(Guid id)
+    public async Task<IActionResult> Delete(Guid id)
     {
         try
         {
-            balanceChangeService.RemoveAsync(id);
+            await balanceChangeService.RemoveAsync(id);
             return NoContent();
         }
         catch (KeyNotFoundException ex)
