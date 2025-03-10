@@ -11,7 +11,7 @@ public class UnitOfWork(
     public IFinancialOperationRepository FinancialOperations => financialOperations;
     public IBalanceChangeRepository BalanceChanges => balanceChanges;
 
-    public int Complete() => context.SaveChanges();
+    public async Task<int> CompleteAsync() => await context.SaveChangesAsync();
 
     public void Dispose() => context.Dispose();
 }
