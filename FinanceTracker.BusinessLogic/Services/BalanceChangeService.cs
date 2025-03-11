@@ -21,17 +21,6 @@ public class BalanceChangeService(IUnitOfWork unitOfWork, IMapper mapper, IValid
         var balanceChange = mapper.Map<BalanceChange>(balanceChangeDto);
         
         Validate(balanceChange);
-
-        var isExists = (await unitOfWork.BalanceChanges.FindAsync(bc =>
-            bc.OperationType == balanceChange.OperationType
-            && bc.Amount == balanceChange.Amount)).Any();
-
-        if (isExists)
-        {
-            throw new InvalidOperationException(
-                $"A {nameof(BalanceChange)} with the same {nameof(BalanceChange.OperationType)} and " +
-                $"{nameof(BalanceChange.Amount)} already exists.");
-        }
         
         await unitOfWork.BalanceChanges.AddAsync(balanceChange);
         await unitOfWork.CompleteAsync();

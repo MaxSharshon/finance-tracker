@@ -8,10 +8,10 @@ public class FinancialOperationValidator : AbstractValidator<FinancialOperation>
     public FinancialOperationValidator()
     {
         RuleFor(operation => operation.Date)
-            .NotEmpty().WithMessage("{PropertyName} is required.");
-
-        RuleFor(operation => operation.BalanceChange)
             .NotEmpty().WithMessage("{PropertyName} is required.")
-            .SetValidator(new BalanceChangeValidator());
+            .LessThanOrEqualTo(DateTime.Now).WithMessage("{PropertyName} cannot be in the future.");
+
+        RuleFor(operation => operation.BalanceChangeId)
+            .NotEmpty().WithMessage("{PropertyName} is required.");
     }
 }

@@ -9,5 +9,6 @@ public class BusinessLogicMapper : Profile
     public BusinessLogicMapper()
     {
         CreateMap<BalanceChange, BalanceChangeDto>().ReverseMap();
+        CreateMap<FinancialOperation, FinancialOperationDto>().ReverseMap();
     }
 }
