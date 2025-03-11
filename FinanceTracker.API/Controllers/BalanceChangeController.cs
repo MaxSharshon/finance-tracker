@@ -52,10 +52,6 @@ public class BalanceChangeController(IBalanceChangeService balanceChangeService,
             return CreatedAtAction(nameof(GetById), new { id = balanceChangeDto.Id },
                 mapper.Map<BalanceChangeResponse>(balanceChangeDto));
         }
-        catch (InvalidOperationException ex)
-        {
-            return Conflict(ex.Message);
-        }
         catch (Exception ex)
         {
             return StatusCode(500, $"Internal Server Error: {ex.Message}");
