@@ -16,8 +16,22 @@ public class ApiMapper : Profile
         CreateMap<BalanceChangeRequest, BalanceChangeDto>()
             .ForMember(dest => dest.OperationType, opt => 
                     opt.MapFrom(src => ConvertOperationType(src.OperationType)));
+
+        CreateMap<FinancialOperationRequest, FinancialOperationDto>()
+            .ForMember(dest => dest.Date, opt => opt.MapFrom(src => ParseDate(src.Date)));
+
+        CreateMap<FinancialOperationDto, FinancialOperationResponse>()
+            .ForMember(dest => dest.Date, opt => opt.MapFrom(src => src.Date.ToString("yyyy-MM-ddTHH:mm:ss")));
     }
-    
+
+    private static DateTime ParseDate(string date)
+    {
+        if (DateTime.TryParse(date, out var parsedDate))
+            return parsedDate;
+
+        throw new ArgumentException("Invalid date format");
+    }
+
     private static OperationType ConvertOperationType(string operationType)
     {
         if (Enum.TryParse<OperationType>(operationType, true, out var result))

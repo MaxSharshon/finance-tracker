@@ -18,6 +18,7 @@ builder.Services.AddScoped<IFinancialOperationRepository, FinancialOperationRepo
 builder.Services.AddScoped<IBalanceChangeRepository, BalanceChangeRepository>();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<IBalanceChangeService, BalanceChangeService>();
+builder.Services.AddScoped<IFinancialOperationService, FinancialOperationService>();
 
 builder.Services.AddValidatorsFromAssemblyContaining<FinancialOperationValidator>();
 builder.Services.AddValidatorsFromAssemblyContaining<BalanceChangeValidator>();
