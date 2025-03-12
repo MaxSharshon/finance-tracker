@@ -1,4 +1,5 @@
-﻿using FinanceTracker.Core.Models;
+﻿using System.Linq.Expressions;
+using FinanceTracker.Core.Models;
 using FinanceTracker.DataAccess.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
@@ -12,9 +13,21 @@ public class FinancialOperationRepository : Repository<FinancialOperation>, IFin
     
     public async Task<IEnumerable<FinancialOperation>> GetByDateWithBalanceChangeAsync(DateTime date)
     {
+        return await FindWithBalanceChangeAsync(operation => operation.Date.Date == date);
+    }
+
+    public async Task<IEnumerable<FinancialOperation>> GetByDateWithBalanceChangeAsync(DateTime startDate, DateTime endDate)
+    {
+        return await FindWithBalanceChangeAsync(operation =>
+            operation.Date.Date >= startDate && operation.Date.Date <= endDate);
+    }
+
+    public async Task<IEnumerable<FinancialOperation>> FindWithBalanceChangeAsync(
+        Expression<Func<FinancialOperation, bool>> predicate)
+    {
         return await FinanceTrackerContext.FinancialOperations
-            .Where(fo => fo.Date.Date == date)
             .Include(fo => fo.BalanceChange)
+            .Where(predicate)
             .ToListAsync();
     }
 }

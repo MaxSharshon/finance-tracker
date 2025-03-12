@@ -1,7 +1,8 @@
 ﻿namespace FinanceTracker.API.Contracts;
 
-public record DailyReportResponse(
-    string Date,
+public record DatePeriodReportResponse(
+    string StartDate,
+    string EndDate,
     decimal TotalIncome,
     decimal TotalExpenses,
     IEnumerable<FinancialOperationResponse> Operations);

@@ -28,4 +28,25 @@ public class ReportsController(IReportsService reportsService, IMapper mapper) :
             return StatusCode(500, $"Internal Server Error: {ex.Message}");
         }
     }
+    
+    [HttpGet("date-period-report")]
+    public async Task<IActionResult> GetDatePeriodReportAsync([FromQuery] string startDate, [FromQuery] string endDate)
+    {
+        if (!DateTime.TryParse(startDate, out var reportStartDate) &
+            !DateTime.TryParse(endDate, out var reportEndDate))
+        {
+            return BadRequest("Invalid date format.");
+        }
+
+        try
+        {
+            var reportDto = await reportsService.GetDatePeriodReportAsync(reportStartDate, reportEndDate);
+            var response = mapper.Map<DatePeriodReportResponse>(reportDto);
+            return Ok(response);
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, $"Internal Server Error: {ex.Message}");
+        }
+    }
 }

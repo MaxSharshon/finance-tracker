@@ -25,6 +25,10 @@ public class ApiMapper : Profile
 
         CreateMap<DailyReportDto, DailyReportResponse>()
             .ForMember(dest => dest.Date, opt => opt.MapFrom(src => src.Date.ToString("yyyy-MM-ddTHH:mm:ss")));
+        
+        CreateMap<DatePeriodReportDto, DatePeriodReportResponse>()
+            .ForMember(dest => dest.StartDate, opt => opt.MapFrom(src => src.StartDate.ToString("yyyy-MM-dd")))
+            .ForMember(dest => dest.EndDate, opt => opt.MapFrom(src => src.EndDate.ToString("yyyy-MM-dd")));
     }
 
     private static DateTime ParseDate(string date)
