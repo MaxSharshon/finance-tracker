@@ -16,6 +16,11 @@ public class BalanceChangeService(IUnitOfWork unitOfWork, IMapper mapper, IValid
     public async Task<BalanceChangeDto> GetById(Guid id) => 
         mapper.Map<BalanceChangeDto>(await GetEntityByIdAsync(id));
 
+    public async Task<IEnumerable<BalanceChangeDto>> GetUnusedAsync()
+    {
+        return mapper.Map<IEnumerable<BalanceChangeDto>>(await unitOfWork.BalanceChanges.GetUnusedAsync());
+    }
+
     public async Task<Guid> AddAsync(BalanceChangeDto balanceChangeDto)
     {
         var balanceChange = mapper.Map<BalanceChange>(balanceChangeDto);

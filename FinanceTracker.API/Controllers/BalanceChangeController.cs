@@ -40,6 +40,19 @@ public class BalanceChangeController(IBalanceChangeService balanceChangeService,
         }
     }
 
+    [HttpGet("unused")]
+    public async Task<IActionResult> GetUnusedAsync()
+    {
+        try
+        {
+            return Ok(mapper.Map<IEnumerable<BalanceChangeResponse>>(await balanceChangeService.GetUnusedAsync()));
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, $"Internal Server Error: {ex.Message}");
+        }
+    }
+
     [HttpPost]
     public async Task<IActionResult> CreateAsync([FromBody] BalanceChangeRequest request)
     {
