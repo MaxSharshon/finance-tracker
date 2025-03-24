@@ -10,16 +10,11 @@ namespace FinanceTracker.API.Controllers;
 public class ReportsController(IReportsService reportsService, IMapper mapper) : ControllerBase
 {
     [HttpGet("daily-report")]
-    public async Task<IActionResult> GetDailyReportAsync([FromQuery] string date)
+    public async Task<IActionResult> GetDailyReportAsync([FromQuery] DateTime date)
     {
-        if (!DateTime.TryParse(date, out var reportDate))
-        {
-            return BadRequest("Invalid date format.");
-        }
-
         try
         {
-            var reportDto = await reportsService.GetDailyReportAsync(reportDate);
+            var reportDto = await reportsService.GetDailyReportAsync(date);
             var response = mapper.Map<DailyReportResponse>(reportDto);
             return Ok(response);
         }
@@ -30,17 +25,11 @@ public class ReportsController(IReportsService reportsService, IMapper mapper) :
     }
     
     [HttpGet("date-period-report")]
-    public async Task<IActionResult> GetDatePeriodReportAsync([FromQuery] string startDate, [FromQuery] string endDate)
+    public async Task<IActionResult> GetDatePeriodReportAsync([FromQuery] DateTime startDate, [FromQuery] DateTime endDate)
     {
-        if (!DateTime.TryParse(startDate, out var reportStartDate) &
-            !DateTime.TryParse(endDate, out var reportEndDate))
-        {
-            return BadRequest("Invalid date format.");
-        }
-
         try
         {
-            var reportDto = await reportsService.GetDatePeriodReportAsync(reportStartDate, reportEndDate);
+            var reportDto = await reportsService.GetDatePeriodReportAsync(startDate, endDate);
             var response = mapper.Map<DatePeriodReportResponse>(reportDto);
             return Ok(response);
         }

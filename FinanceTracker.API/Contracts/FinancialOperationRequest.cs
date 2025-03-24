@@ -1,3 +1,3 @@
 ﻿namespace FinanceTracker.API.Contracts;
 
-public record FinancialOperationRequest(string Date, Guid BalanceChangeId);
+public record FinancialOperationRequest(DateTime Date, Guid BalanceChangeId);
