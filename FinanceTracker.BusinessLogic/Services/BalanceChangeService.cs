@@ -38,13 +38,13 @@ public class BalanceChangeService(IUnitOfWork unitOfWork, IMapper mapper, IValid
         var existingBalanceChange = await GetEntityByIdAsync(balanceChangeDto.Id);
         mapper.Map(balanceChangeDto, existingBalanceChange);
         Validate(existingBalanceChange);
-        unitOfWork.CompleteAsync();
+        await unitOfWork.CompleteAsync();
     }
 
     public async Task RemoveAsync(Guid id)
     {
         unitOfWork.BalanceChanges.Remove(await GetEntityByIdAsync(id));
-        unitOfWork.CompleteAsync();
+        await unitOfWork.CompleteAsync();
     }
 
     private async Task<BalanceChange> GetEntityByIdAsync(Guid id)

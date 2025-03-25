@@ -35,13 +35,13 @@ public class FinancialOperationService(IUnitOfWork unitOfWork, IMapper mapper, I
         var existingFinancialOperation = await GetEntityByIdAsync(financialOperationDto.Id);
         mapper.Map(financialOperationDto, existingFinancialOperation);
         Validate(existingFinancialOperation);
-        unitOfWork.CompleteAsync();
+        await unitOfWork.CompleteAsync();
     }
 
     public async Task RemoveAsync(Guid id)
     {
         unitOfWork.FinancialOperations.Remove(await GetEntityByIdAsync(id));
-        unitOfWork.CompleteAsync();
+        await unitOfWork.CompleteAsync();
     }
 
     private async Task<FinancialOperation> GetEntityByIdAsync(Guid id)
