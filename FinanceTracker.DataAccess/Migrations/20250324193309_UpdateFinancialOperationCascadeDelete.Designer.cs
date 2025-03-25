@@ -4,6 +4,7 @@ using FinanceTracker.DataAccess;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FinanceTracker.DataAccess.Migrations
 {
     [DbContext(typeof(FinanceTrackerContext))]
-    partial class FinanceTrackerContextModelSnapshot : ModelSnapshot
+    [Migration("20250324193309_UpdateFinancialOperationCascadeDelete")]
+    partial class UpdateFinancialOperationCascadeDelete
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

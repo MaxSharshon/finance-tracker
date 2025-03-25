@@ -26,6 +26,6 @@ public class FinancialOperationConfig : IEntityTypeConfiguration<FinancialOperat
             .HasOne(operation => operation.BalanceChange)
             .WithOne()
             .HasForeignKey<FinancialOperation>(operation => operation.BalanceChangeId)
-            .OnDelete(DeleteBehavior.Restrict);
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }
