@@ -13,7 +13,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddDbContext<FinanceTrackerContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("FinanceTrackerDb")));
+    options.UseAzureSql(builder.Configuration.GetConnectionString("AzureFinanceTrackerDb")));
 builder.Services.AddScoped<IFinancialOperationRepository, FinancialOperationRepository>();
 builder.Services.AddScoped<IBalanceChangeRepository, BalanceChangeRepository>();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
