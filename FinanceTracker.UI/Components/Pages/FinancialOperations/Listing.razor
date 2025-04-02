@@ -1,0 +1,44 @@
+﻿@page "/financial-operations"
+
+<h3>Financial Operations</h3>
+
+@if (!string.IsNullOrEmpty(_errorMessage))
+{
+    <p style="color: red">@_errorMessage</p>
+}
+
+@if (_operations == null)
+{
+    <p>Loading...</p>
+}
+else if (!_operations.Any())
+{
+    <p>No financial operations found.</p>
+}
+else
+{
+    <table class="table">
+        <thread>
+            <tr>
+                <th>Date</th>
+                <th>Balance Change ID</th>
+                <th>Actions</th>
+            </tr>
+        </thread>
+        <tbody>
+        @foreach (var operation in _operations)
+        {
+            <tr>
+                <td>@operation.Date</td>
+                <td>@operation.BalanceChangeId</td>
+                <td>
+                    <button @onclick="() => NavigateToEdit(operation.Id)">Edit</button>
+                    <button @onclick="() => DeleteAsync(operation.Id)">Delete</button>
+                </td>
+            </tr>        
+        }
+        </tbody>
+    </table>
+    
+    <button class="btn btn-primary" @onclick="NavigateToCreate">Create New</button>
+}

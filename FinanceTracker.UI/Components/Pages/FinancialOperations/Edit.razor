@@ -1,0 +1,43 @@
+﻿@page "/financial-operations/edit/{id}"
+
+<h3>Edit Financial Operation</h3>
+
+@if (!string.IsNullOrEmpty(_errorMessage))
+{
+    <p style="color: red">@_errorMessage</p>
+}
+
+@if (_operation is null)
+{
+    <p>Loading...</p>
+}
+else
+{
+    <EditForm Model="_operation"
+              OnValidSubmit="HandleValidSubmit"
+              FormName="EditFinancialOperationForm">
+        <DataAnnotationsValidator/>
+        <ValidationSummary/>
+
+        <div>
+            <label>Date:</label>
+            <InputDate @bind-value="_operation.Date" />
+            <ValidationMessage For="() => _operation.Date" />
+        </div>
+
+        <div>
+            <label>Balance Change:</label>
+            <select @bind="_operation.BalanceChangeId">
+                <option value="">-- Select --</option>
+                @foreach (var bc in _unusedBalanceChanges)
+                {
+                    <option value="@bc.Id">@bc.OperationType (@bc.Amount)</option>
+                }
+            </select>
+            <ValidationMessage For="() => _operation.BalanceChangeId" />
+        </div>
+
+        <button type="submit">Save</button>
+        <button type="button" @onclick="GoToListing">Cancel</button>
+    </EditForm>
+}

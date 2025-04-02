@@ -1,0 +1,42 @@
+﻿@page "/balance-changes/edit/{id}"
+
+<h3>Edit Balance Change</h3>
+
+@if (!string.IsNullOrEmpty(_errorMessage))
+{
+    <p style="color: red">@_errorMessage</p>
+}
+
+@if (_balanceChange == null)
+{
+    <p>Loading...</p>
+}
+else
+{
+    <EditForm Model="_balanceChange"
+              OnValidSubmit="HandleValidSubmit">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+        
+        <div>
+            <label>Operation Type:</label>
+            <InputSelect @bind-Value="_balanceChange.OperationType">
+                <option value="">-- Select --</option>
+                @foreach (var option in _operationTypeOptions)
+                {
+                    <option value="@option">@option</option>
+                }
+            </InputSelect>
+            <ValidationMessage For="() => _balanceChange.OperationType"/>
+        </div>
+
+        <div>
+            <label>Amount:</label>
+            <InputNumber @bind-Value="_balanceChange.Amount" />
+            <ValidationMessage For="() => _balanceChange.Amount" />
+        </div>
+
+        <button type="submit">Save</button>
+        <button type="button" @onclick="GoToListing">Cancel</button>
+    </EditForm>
+}

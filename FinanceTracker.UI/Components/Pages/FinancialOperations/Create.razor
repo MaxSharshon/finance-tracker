@@ -1,0 +1,35 @@
+﻿@page "/financial-operations/create"
+
+<h3>Create New</h3>
+
+<EditForm Model="_newOperation"
+          OnValidSubmit="HandleValidSubmit"
+          FormName="CreateFinancialOperationForm">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div>
+        <label>Date:</label>
+        <InputDate @bind-value="_newOperation.Date" />
+        <ValidationMessage For="() => _newOperation.Date" />
+    </div>
+    
+    <div>
+        <label>Balance Change:</label>
+        <select @bind="_newOperation.BalanceChangeId">
+            <option value="">-- Select --</option>
+            @foreach (var bc in _unusedBalanceChanges)
+            {
+                <option value="@bc.Id">@bc.OperationType (@bc.Amount)</option>
+            }
+        </select>
+        <ValidationMessage For="() => _newOperation.BalanceChangeId" />
+    </div>
+    
+    <button type="submit">Create</button>
+</EditForm>
+
+@if (!string.IsNullOrEmpty(_errorMessage))
+{
+    <p style="color: red">@_errorMessage</p>
+}

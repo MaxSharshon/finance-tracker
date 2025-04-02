@@ -1,0 +1,43 @@
+﻿@page "/reports/date-period"
+
+<h3>Date Period Report</h3>
+
+<EditForm Model="_filter"
+          OnValidSubmit="FetchReport"
+          FormName="SetDatePeriodForDatePeriodReportForm">
+    
+    <label>Start Date:</label>
+    <InputDate @bind-Value="_filter.StartDate"/>
+
+    <label>End Date:</label>
+    <InputDate @bind-Value="_filter.EndDate"/>
+
+    <button type="submit">Generate Report</button>
+</EditForm>
+
+@if (_report is not null)
+{
+    <h4>Summary for @_report.StartDate.ToShortDateString() - @_report.EndDate.ToShortDateString()</h4>
+    <p><strong>Total Income: </strong>@_report.TotalIncome</p>
+    <p><strong>Total Expenses: </strong>@_report.TotalExpenses</p>
+    
+    <h5>Operations</h5>
+    if (_report.Operations.Any())
+    {
+        <ul>
+            @foreach (var operation in _report.Operations)
+            {
+                <li>@operation.Date.ToShortDateString() - @operation.BalanceChangeId</li>
+            }
+        </ul>
+    }
+    else
+    {
+        <p>No operations for this date period.</p>
+    }
+}
+
+@if (!string.IsNullOrEmpty(_errorMessage))
+{
+    <p style="color: red">@_errorMessage</p>
+}
