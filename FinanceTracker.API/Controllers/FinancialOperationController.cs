@@ -29,7 +29,7 @@ public class FinancialOperationController(IFinancialOperationService financialOp
     {
         try
         {
-            return Ok(mapper.Map<FinancialOperationResponse>(await financialOperationService.GetById(id)));
+            return Ok(mapper.Map<FinancialOperationResponse>(await financialOperationService.GetByIdAsync(id)));
         }
         catch (KeyNotFoundException ex)
         {
