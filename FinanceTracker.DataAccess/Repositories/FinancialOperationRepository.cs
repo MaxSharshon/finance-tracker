@@ -1,33 +1,52 @@
-﻿using System.Linq.Expressions;
-using FinanceTracker.Core.Models;
+﻿using FinanceTracker.Core.Models;
 using FinanceTracker.DataAccess.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 namespace FinanceTracker.DataAccess.Repositories;
 
-public class FinancialOperationRepository : Repository<FinancialOperation>, IFinancialOperationRepository
+public class FinancialOperationRepository(FinanceTrackerContext context)
+    : Repository<FinancialOperation>(context), IFinancialOperationRepository
 {
-    public FinancialOperationRepository(FinanceTrackerContext context) : base(context) { }
+    private FinanceTrackerContext FinanceTrackerContext => (FinanceTrackerContext)Context;
 
-    private FinanceTrackerContext FinanceTrackerContext => Context as FinanceTrackerContext;
-    
-    public async Task<IEnumerable<FinancialOperation>> GetByDateWithBalanceChangeAsync(DateTime date)
+    public override async Task<FinancialOperation?> GetAsync(Guid id)
     {
-        return await FindWithBalanceChangeAsync(operation => operation.Date.Date == date);
+        return await BuildDetailedQuery().FirstOrDefaultAsync(operation => operation.Id == id);
     }
 
-    public async Task<IEnumerable<FinancialOperation>> GetByDateWithBalanceChangeAsync(DateTime startDate, DateTime endDate)
+    public override async Task<IEnumerable<FinancialOperation>> GetAllAsync()
     {
-        return await FindWithBalanceChangeAsync(operation =>
-            operation.Date.Date >= startDate && operation.Date.Date <= endDate);
-    }
-
-    public async Task<IEnumerable<FinancialOperation>> FindWithBalanceChangeAsync(
-        Expression<Func<FinancialOperation, bool>> predicate)
-    {
-        return await FinanceTrackerContext.FinancialOperations
-            .Include(fo => fo.BalanceChange)
-            .Where(predicate)
+        return await BuildDetailedQuery()
+            .OrderByDescending(operation => operation.Date)
             .ToListAsync();
+    }
+
+    public async Task<IEnumerable<FinancialOperation>> GetByDateAsync(DateTime date)
+    {
+        var targetDate = date.Date;
+        return await BuildDetailedQuery()
+            .Where(operation => operation.Date.Date == targetDate)
+            .OrderByDescending(operation => operation.Date)
+            .ToListAsync();
+    }
+
+    public async Task<IEnumerable<FinancialOperation>> GetByPeriodAsync(DateTime startDate, DateTime endDate)
+    {
+        var start = startDate.Date;
+        var end = endDate.Date.AddDays(1);
+        return await BuildDetailedQuery()
+            .Where(operation => operation.Date >= start && operation.Date <= end)
+            .OrderByDescending(operation => operation.Date)
+            .ToListAsync();
+    }
+
+    private IQueryable<FinancialOperation> BuildDetailedQuery()
+    {
+        return FinanceTrackerContext.FinancialOperations
+            .Include(operation => operation.Category)
+            .Include(operation => operation.Budget)
+            .Include(operation => operation.User)
+            .Include(operation => operation.OperationTags)
+            .ThenInclude(tag => tag.Tag);
     }
 }
