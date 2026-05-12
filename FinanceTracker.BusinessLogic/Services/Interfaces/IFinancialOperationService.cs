@@ -5,8 +5,8 @@ namespace FinanceTracker.BusinessLogic.Services.Interfaces;
 public interface IFinancialOperationService
 {
     Task<IEnumerable<FinancialOperationDto>> GetAllAsync();
-    Task<FinancialOperationDto> GetById(Guid id);
-    Task<Guid> AddAsync(FinancialOperationDto financialOperationDto);
-    Task UpdateAsync(FinancialOperationDto financialOperationDto);
+    Task<FinancialOperationDto> GetByIdAsync(Guid id);
+    Task<Guid> AddAsync(FinancialOperationDto operationDto);
+    Task UpdateAsync(FinancialOperationDto operationDto);
     Task RemoveAsync(Guid id);
 }

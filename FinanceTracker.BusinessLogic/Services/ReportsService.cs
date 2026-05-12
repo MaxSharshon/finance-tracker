@@ -11,7 +11,7 @@ public class ReportsService(IUnitOfWork unitOfWork, IMapper mapper) : IReportsSe
 {
     public async Task<DailyReportDto> GetDailyReportAsync(DateTime date)
     {
-        var operations = await unitOfWork.FinancialOperations.GetByDateWithBalanceChangeAsync(date);
+        var operations = await unitOfWork.FinancialOperations.GetByDateAsync(date);
         var totalIncome = GetSumForOperationType(operations, OperationType.Income);
         var totalExpenses = GetSumForOperationType(operations, OperationType.Expense);
 
@@ -26,7 +26,7 @@ public class ReportsService(IUnitOfWork unitOfWork, IMapper mapper) : IReportsSe
 
     public async Task<DatePeriodReportDto> GetDatePeriodReportAsync(DateTime startDate, DateTime endDate)
     {
-        var operations = await unitOfWork.FinancialOperations.GetByDateWithBalanceChangeAsync(startDate, endDate);
+        var operations = await unitOfWork.FinancialOperations.GetByPeriodAsync(startDate, endDate);
         var totalIncome = GetSumForOperationType(operations, OperationType.Income);
         var totalExpenses = GetSumForOperationType(operations, OperationType.Expense);
 
@@ -43,7 +43,7 @@ public class ReportsService(IUnitOfWork unitOfWork, IMapper mapper) : IReportsSe
     private static decimal GetSumForOperationType(IEnumerable<FinancialOperation> operations, OperationType type)
     {
         return operations
-            .Where(o => o.BalanceChange!.OperationType == type)
-            .Sum(o => o.BalanceChange!.Amount);
+            .Where(o => o.OperationType == type)
+            .Sum(o => o.Amount);
     }
 }
