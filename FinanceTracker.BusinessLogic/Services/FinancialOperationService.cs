@@ -1,5 +1,6 @@
 using AutoMapper;
 using FinanceTracker.BusinessLogic.DTOs;
+using FinanceTracker.BusinessLogic.Extensions;
 using FinanceTracker.BusinessLogic.Services.Interfaces;
 using FinanceTracker.Core.Models;
 using FinanceTracker.DataAccess.Repositories.Interfaces;
@@ -30,7 +31,7 @@ public class FinancialOperationService(
         var operation = mapper.Map<FinancialOperation>(operationDto);
         SyncTags(operation, operationDto.TagIds);
         
-        Validate(operation);
+        validator.EnsureValid(operation);
         
         await unitOfWork.FinancialOperations.AddAsync(operation);
         await unitOfWork.CompleteAsync();
@@ -47,7 +48,7 @@ public class FinancialOperationService(
         mapper.Map(operationDto, existingOperation);
         SyncTags(existingOperation, operationDto.TagIds);
         
-        Validate(existingOperation);
+        validator.EnsureValid(existingOperation);
         await unitOfWork.CompleteAsync();
     }
 
@@ -61,15 +62,6 @@ public class FinancialOperationService(
     {
         return await unitOfWork.FinancialOperations.GetAsync(id) ??
                throw new KeyNotFoundException($"A {nameof(FinancialOperation)} with ID {id} not found.");
-    }
-    
-    private void Validate(FinancialOperation operation)
-    {
-        var result = validator.Validate(operation);
-        if (result.IsValid) return;
-        
-        var errors = string.Join(',', result.Errors.Select(e => e.ErrorMessage));
-        throw new ValidationException($"Validation failed: {errors}");
     }
 
     private async Task EnsureReferencesExistAsync(FinancialOperationDto operationDto)
