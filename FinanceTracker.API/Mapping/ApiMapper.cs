@@ -1,5 +1,7 @@
 ﻿using AutoMapper;
-using FinanceTracker.API.Contracts;
+using FinanceTracker.API.Contracts.BalanceChanges;
+using FinanceTracker.API.Contracts.FinancialOperations;
+using FinanceTracker.API.Contracts.Reports;
 using FinanceTracker.BusinessLogic.DTOs;
 using FinanceTracker.Core.Enums;
 

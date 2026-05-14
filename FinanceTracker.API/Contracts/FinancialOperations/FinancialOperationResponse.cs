@@ -1,6 +1,7 @@
-﻿namespace FinanceTracker.API.Contracts;
+namespace FinanceTracker.API.Contracts.FinancialOperations;
 
-public record FinancialOperationRequest(
+public record FinancialOperationResponse(
+    Guid Id,
     Guid? UserId,
     Guid CategoryId,
     Guid? BudgetId,
