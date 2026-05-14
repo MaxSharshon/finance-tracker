@@ -18,15 +18,12 @@ public class ApiMapper : Profile
                     opt.MapFrom(src => ConvertOperationType(src.OperationType)));
 
         CreateMap<FinancialOperationRequest, FinancialOperationDto>()
-            .ForMember(dest => dest.OperationType,
-                opt => opt.MapFrom(src => ConvertOperationType(src.OperationType)))
             .ForMember(dest => dest.TagIds,
                 opt => opt.MapFrom(src => src.TagIds));
 
         CreateMap<FinancialOperationDto, FinancialOperationResponse>()
-            .ForMember(dest => dest.OperationType,
-                opt => opt.MapFrom(src => Enum.GetName(src.OperationType) ?? src.OperationType.ToString()))
-            .ForMember(dest => dest.TagIds, opt => opt.MapFrom(src => src.TagIds));
+            .ForMember(dest => dest.TagIds, 
+                opt => opt.MapFrom(src => src.TagIds));
         
         CreateMap<DailyReportDto, DailyReportResponse>();
         

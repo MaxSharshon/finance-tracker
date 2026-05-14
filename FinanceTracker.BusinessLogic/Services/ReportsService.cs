@@ -43,7 +43,7 @@ public class ReportsService(IUnitOfWork unitOfWork, IMapper mapper) : IReportsSe
     private static decimal GetSumForOperationType(IEnumerable<FinancialOperation> operations, OperationType type)
     {
         return operations
-            .Where(o => o.OperationType == type)
+            .Where(o => o.Category != null && o.Category.OperationType == type)
             .Sum(o => o.Amount);
     }
 }

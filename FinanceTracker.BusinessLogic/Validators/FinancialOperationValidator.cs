@@ -11,11 +11,11 @@ public class FinancialOperationValidator : AbstractValidator<FinancialOperation>
             .NotEmpty().WithMessage("{PropertyName} is required.")
             .LessThanOrEqualTo(DateTime.Now).WithMessage("{PropertyName} cannot be in the future.");
 
+        RuleFor(operation => operation.CategoryId)
+            .NotEmpty().WithMessage("{PropertyName} is required.");
+        
         RuleFor(operation => operation.Amount)
             .GreaterThan(0).WithMessage("{PropertyName} must be greater than {ComparisonValue}}.");
-
-        RuleFor(operation => operation.OperationType)
-            .IsInEnum().WithMessage("{PropertyName} is invalid.");
         
         RuleFor(operation => operation.Description)
             .MaximumLength(512).WithMessage("{PropertyName} is too long.");

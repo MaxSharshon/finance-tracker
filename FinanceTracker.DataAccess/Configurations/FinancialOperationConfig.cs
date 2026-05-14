@@ -15,13 +15,13 @@ public class FinancialOperationConfig : IEntityTypeConfiguration<FinancialOperat
 
         builder.Property(operation => operation.Date)
             .IsRequired();
+        
+        builder.Property(operation => operation.CategoryId)
+            .IsRequired();
 
         builder.Property(operation => operation.Amount)
             .HasColumnType("decimal(18,2)")
             .HasDefaultValue(0m)
-            .IsRequired();
-
-        builder.Property(operation => operation.OperationType)
             .IsRequired();
 
         builder.Property(operation => operation.Description)
@@ -35,7 +35,7 @@ public class FinancialOperationConfig : IEntityTypeConfiguration<FinancialOperat
         builder.HasOne(operation => operation.Category)
             .WithMany(category => category.FinancialOperations)
             .HasForeignKey(operation => operation.CategoryId)
-            .OnDelete(DeleteBehavior.SetNull);
+            .OnDelete(DeleteBehavior.Restrict);
 
         builder.HasOne(operation => operation.Budget)
             .WithMany(budget => budget.FinancialOperations)

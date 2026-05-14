@@ -66,9 +66,9 @@ public class FinancialOperationService(
 
     private async Task EnsureReferencesExistAsync(FinancialOperationDto operationDto)
     {
-        if (operationDto.CategoryId.HasValue && await unitOfWork.Categories.GetAsync(operationDto.CategoryId.Value) is null)
+        if (await unitOfWork.Categories.GetAsync(operationDto.CategoryId) is null)
         {
-            throw new KeyNotFoundException($"A {nameof(Category)} with ID {operationDto.CategoryId.Value} not found.");
+            throw new KeyNotFoundException($"A {nameof(Category)} with ID {operationDto.CategoryId} not found.");
         }
 
         if (operationDto.BudgetId.HasValue && await unitOfWork.Budgets.GetAsync(operationDto.BudgetId.Value) is null)
