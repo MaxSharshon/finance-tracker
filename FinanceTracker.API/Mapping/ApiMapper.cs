@@ -1,5 +1,7 @@
 ﻿using AutoMapper;
-using FinanceTracker.API.Contracts;
+using FinanceTracker.API.Contracts.BalanceChanges;
+using FinanceTracker.API.Contracts.FinancialOperations;
+using FinanceTracker.API.Contracts.Reports;
 using FinanceTracker.BusinessLogic.DTOs;
 using FinanceTracker.Core.Enums;
 
@@ -17,9 +19,13 @@ public class ApiMapper : Profile
             .ForMember(dest => dest.OperationType, opt => 
                     opt.MapFrom(src => ConvertOperationType(src.OperationType)));
 
-        CreateMap<FinancialOperationRequest, FinancialOperationDto>();
+        CreateMap<FinancialOperationRequest, FinancialOperationDto>()
+            .ForMember(dest => dest.TagIds,
+                opt => opt.MapFrom(src => src.TagIds));
 
-        CreateMap<FinancialOperationDto, FinancialOperationResponse>();
+        CreateMap<FinancialOperationDto, FinancialOperationResponse>()
+            .ForMember(dest => dest.TagIds, 
+                opt => opt.MapFrom(src => src.TagIds));
         
         CreateMap<DailyReportDto, DailyReportResponse>();
         
@@ -28,9 +34,8 @@ public class ApiMapper : Profile
 
     private static OperationType ConvertOperationType(string operationType)
     {
-        if (Enum.TryParse<OperationType>(operationType, true, out var result))
-            return result;
-
-        throw new ArgumentException($"Invalid operation type: {operationType}");
+        return Enum.TryParse<OperationType>(operationType, true, out var result)
+            ? result
+            : throw new ArgumentException($"Invalid operation type: {operationType}");
     }
 }

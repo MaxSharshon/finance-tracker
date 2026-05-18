@@ -8,12 +8,12 @@ public class Repository<TEntity>(DbContext context) : IRepository<TEntity> where
 {
     protected readonly DbContext Context = context;
 
-    public async Task<TEntity?> GetAsync(Guid id)
+    public virtual async Task<TEntity?> GetAsync(Guid id)
     {
         return await Context.Set<TEntity>().FindAsync(id);
     }
 
-    public async Task<IEnumerable<TEntity>> GetAllAsync()
+    public virtual async Task<IEnumerable<TEntity>> GetAllAsync()
     {
         return await Context.Set<TEntity>().ToListAsync();
     }

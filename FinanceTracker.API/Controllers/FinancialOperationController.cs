@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using FinanceTracker.API.Contracts;
+using FinanceTracker.API.Contracts.FinancialOperations;
 using FinanceTracker.BusinessLogic.DTOs;
 using FinanceTracker.BusinessLogic.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
@@ -29,7 +29,7 @@ public class FinancialOperationController(IFinancialOperationService financialOp
     {
         try
         {
-            return Ok(mapper.Map<FinancialOperationResponse>(await financialOperationService.GetById(id)));
+            return Ok(mapper.Map<FinancialOperationResponse>(await financialOperationService.GetByIdAsync(id)));
         }
         catch (KeyNotFoundException ex)
         {

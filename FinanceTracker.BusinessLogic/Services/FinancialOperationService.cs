@@ -1,5 +1,6 @@
 using AutoMapper;
 using FinanceTracker.BusinessLogic.DTOs;
+using FinanceTracker.BusinessLogic.Extensions;
 using FinanceTracker.BusinessLogic.Services.Interfaces;
 using FinanceTracker.Core.Models;
 using FinanceTracker.DataAccess.Repositories.Interfaces;
@@ -7,34 +8,47 @@ using FluentValidation;
 
 namespace FinanceTracker.BusinessLogic.Services;
 
-public class FinancialOperationService(IUnitOfWork unitOfWork, IMapper mapper, IValidator<FinancialOperation> validator)
+public class FinancialOperationService(
+    IUnitOfWork unitOfWork, 
+    IMapper mapper, 
+    IValidator<FinancialOperation> validator)
     : IFinancialOperationService
 {
-    public async Task<IEnumerable<FinancialOperationDto>> GetAllAsync() => 
-        mapper.Map<IEnumerable<FinancialOperationDto>>(await unitOfWork.FinancialOperations.GetAllAsync());
-    
-    public async Task<FinancialOperationDto> GetById(Guid id) => 
-        mapper.Map<FinancialOperationDto>(await GetEntityByIdAsync(id));
-    
-    public async Task<Guid> AddAsync(FinancialOperationDto financialOperationDto)
+    public async Task<IEnumerable<FinancialOperationDto>> GetAllAsync()
     {
-        await CheckForConflicts(financialOperationDto);
+        return mapper.Map<IEnumerable<FinancialOperationDto>>(await unitOfWork.FinancialOperations.GetAllAsync());
+    }
+
+    public async Task<FinancialOperationDto> GetByIdAsync(Guid id)
+    {
+        return mapper.Map<FinancialOperationDto>(await GetEntityByIdAsync(id));
+    }
+
+    public async Task<Guid> AddAsync(FinancialOperationDto operationDto)
+    {
+        await EnsureReferencesExistAsync(operationDto);
         
-        var financialOperation = mapper.Map<FinancialOperation>(financialOperationDto);
-        Validate(financialOperation);
+        var operation = mapper.Map<FinancialOperation>(operationDto);
+        SyncTags(operation, operationDto.TagIds);
         
-        await unitOfWork.FinancialOperations.AddAsync(financialOperation);
+        validator.EnsureValid(operation);
+        
+        await unitOfWork.FinancialOperations.AddAsync(operation);
         await unitOfWork.CompleteAsync();
         
-        return financialOperation.Id;
+        return operation.Id;
     }
     
-    public async Task UpdateAsync(FinancialOperationDto financialOperationDto)
+    public async Task UpdateAsync(FinancialOperationDto operationDto)
     {
-        await CheckForConflicts(financialOperationDto);
-        var existingFinancialOperation = await GetEntityByIdAsync(financialOperationDto.Id);
-        mapper.Map(financialOperationDto, existingFinancialOperation);
-        Validate(existingFinancialOperation);
+        await EnsureReferencesExistAsync(operationDto);
+        
+        var existingOperation = await GetEntityByIdAsync(operationDto.Id);
+        
+        mapper.Map(operationDto, existingOperation);
+        SyncTags(existingOperation, operationDto.TagIds);
+        
+        validator.EnsureValid(existingOperation);
         await unitOfWork.CompleteAsync();
     }
 
@@ -47,42 +61,41 @@ public class FinancialOperationService(IUnitOfWork unitOfWork, IMapper mapper, I
     private async Task<FinancialOperation> GetEntityByIdAsync(Guid id)
     {
         return await unitOfWork.FinancialOperations.GetAsync(id) ??
-               throw new KeyNotFoundException($"{nameof(FinancialOperation)} with ID {id} not found.");
+               throw new KeyNotFoundException($"A {nameof(FinancialOperation)} with ID {id} not found.");
     }
-    
-    private void Validate(FinancialOperation financialOperation)
+
+    private async Task EnsureReferencesExistAsync(FinancialOperationDto operationDto)
     {
-        var result = validator.Validate(financialOperation);
-        if (result.IsValid) return;
-        
-        var errors = string.Join(',', result.Errors.Select(e => e.ErrorMessage));
-        throw new ValidationException($"Validation failed: {errors}");
-    }
-    
-    private async Task EnsureBalanceChangeExistsAsync(Guid balanceChangeId)
-    {
-        if (await unitOfWork.BalanceChanges.GetAsync(balanceChangeId) == null)
+        if (await unitOfWork.Categories.GetAsync(operationDto.CategoryId) is null)
         {
-            throw new KeyNotFoundException($"A {nameof(BalanceChange)} with ID {balanceChangeId} doesn't exist.");
+            throw new KeyNotFoundException($"A {nameof(Category)} with ID {operationDto.CategoryId} not found.");
+        }
+
+        if (operationDto.BudgetId.HasValue && await unitOfWork.Budgets.GetAsync(operationDto.BudgetId.Value) is null)
+        {
+            throw new KeyNotFoundException($"A {nameof(Budget)} with ID {operationDto.BudgetId.Value} not found.");
+        }
+        
+        foreach (var tagId in operationDto.TagIds.Distinct())
+        {
+            if (await unitOfWork.Tags.GetAsync(tagId) is null)
+            {
+                throw new KeyNotFoundException($"A {nameof(Tag)} with ID {tagId} not found.");
+            }
         }
     }
 
-    private async Task EnsureBalanceChangeHaveNotAlreadyTakenAsync(Guid balanceChangeId, Guid? excludedId = null)
+    private static void SyncTags(FinancialOperation operation, IEnumerable<Guid> tagIds)
     {
-        var isExists = (await unitOfWork.FinancialOperations.FindAsync(fo => 
-            fo.BalanceChangeId == balanceChangeId 
-            && (excludedId == null || fo.Id != excludedId))).Any();
-        
-        if (isExists)
-        {
-            throw new InvalidOperationException(
-                $"A {nameof(FinancialOperation)} with {nameof(FinancialOperation.BalanceChangeId)} {balanceChangeId} already exists.");
-        }
-    }
+        operation.OperationTags.Clear();
 
-    private async Task CheckForConflicts(FinancialOperationDto financialOperationDto)
-    {
-        await EnsureBalanceChangeExistsAsync(financialOperationDto.BalanceChangeId);
-        await EnsureBalanceChangeHaveNotAlreadyTakenAsync(financialOperationDto.BalanceChangeId, financialOperationDto.Id);
+        foreach (var tagId in tagIds.Distinct())
+        {
+            operation.OperationTags.Add(new OperationTag
+            {
+                FinancialOperationId = operation.Id,
+                TagId = tagId
+            });
+        }
     }
 }

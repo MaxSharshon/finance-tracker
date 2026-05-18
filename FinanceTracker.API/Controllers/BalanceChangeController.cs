@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using FinanceTracker.API.Contracts;
+using FinanceTracker.API.Contracts.BalanceChanges;
 using FinanceTracker.BusinessLogic.DTOs;
 using FinanceTracker.BusinessLogic.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
