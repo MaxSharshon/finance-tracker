@@ -9,40 +9,44 @@ public class FinancialOperationRepository(FinanceTrackerContext context)
 {
     private FinanceTrackerContext FinanceTrackerContext => (FinanceTrackerContext)Context;
 
-    public override async Task<FinancialOperation?> GetAsync(Guid id)
+    public async Task<FinancialOperation?> GetByIdAsync(Guid id, Guid userId)
     {
-        return await BuildDetailedQuery().FirstOrDefaultAsync(operation => operation.Id == id);
+        return await BuildDetailedQuery(userId).FirstOrDefaultAsync(operation => operation.Id == id);
     }
 
-    public override async Task<IEnumerable<FinancialOperation>> GetAllAsync()
+    public async Task<IEnumerable<FinancialOperation>> GetAllAsync(Guid userId)
     {
-        return await BuildDetailedQuery()
+        return await BuildDetailedQuery(userId)
             .OrderByDescending(operation => operation.Date)
             .ToListAsync();
     }
 
-    public async Task<IEnumerable<FinancialOperation>> GetByDateAsync(DateTime date)
+    public async Task<IEnumerable<FinancialOperation>> GetByDateAsync(DateTime date, Guid userId)
     {
         var targetDate = date.Date;
-        return await BuildDetailedQuery()
+        return await BuildDetailedQuery(userId)
             .Where(operation => operation.Date.Date == targetDate)
             .OrderByDescending(operation => operation.Date)
             .ToListAsync();
     }
 
-    public async Task<IEnumerable<FinancialOperation>> GetByPeriodAsync(DateTime startDate, DateTime endDate)
+    public async Task<IEnumerable<FinancialOperation>> GetByPeriodAsync(
+        DateTime startDate,
+        DateTime endDate,
+        Guid userId)
     {
         var start = startDate.Date;
         var end = endDate.Date.AddDays(1);
-        return await BuildDetailedQuery()
-            .Where(operation => operation.Date >= start && operation.Date <= end)
+        return await BuildDetailedQuery(userId)
+            .Where(operation => operation.Date >= start && operation.Date < end)
             .OrderByDescending(operation => operation.Date)
             .ToListAsync();
     }
 
-    private IQueryable<FinancialOperation> BuildDetailedQuery()
+    private IQueryable<FinancialOperation> BuildDetailedQuery(Guid userId)
     {
         return FinanceTrackerContext.FinancialOperations
+            .Where(operation => operation.UserId == userId)
             .Include(operation => operation.Category)
             .Include(operation => operation.Budget)
             .Include(operation => operation.User)

@@ -14,21 +14,24 @@ public class FinancialOperationService(
     IValidator<FinancialOperation> validator)
     : IFinancialOperationService
 {
-    public async Task<IEnumerable<FinancialOperationDto>> GetAllAsync()
+    public async Task<IEnumerable<FinancialOperationDto>> GetAllAsync(Guid userId)
     {
-        return mapper.Map<IEnumerable<FinancialOperationDto>>(await unitOfWork.FinancialOperations.GetAllAsync());
+        var operations = await unitOfWork.FinancialOperations.GetAllAsync(userId);
+        return mapper.Map<IEnumerable<FinancialOperationDto>>(operations);
     }
 
-    public async Task<FinancialOperationDto> GetByIdAsync(Guid id)
+    public async Task<FinancialOperationDto> GetByIdAsync(Guid id, Guid userId)
     {
-        return mapper.Map<FinancialOperationDto>(await GetEntityByIdAsync(id));
+        return mapper.Map<FinancialOperationDto>(await GetEntityByIdAsync(id, userId));
     }
 
-    public async Task<Guid> AddAsync(FinancialOperationDto operationDto)
+    public async Task<Guid> AddAsync(FinancialOperationDto operationDto, Guid userId)
     {
         await EnsureReferencesExistAsync(operationDto);
         
         var operation = mapper.Map<FinancialOperation>(operationDto);
+        operation.UserId = userId;
+        
         SyncTags(operation, operationDto.TagIds);
         
         validator.EnsureValid(operation);
@@ -39,29 +42,31 @@ public class FinancialOperationService(
         return operation.Id;
     }
     
-    public async Task UpdateAsync(FinancialOperationDto operationDto)
+    public async Task UpdateAsync(FinancialOperationDto operationDto, Guid userId)
     {
         await EnsureReferencesExistAsync(operationDto);
         
-        var existingOperation = await GetEntityByIdAsync(operationDto.Id);
+        var existingOperation = await GetEntityByIdAsync(operationDto.Id, userId);
         
         mapper.Map(operationDto, existingOperation);
+        existingOperation.UserId = userId;
+        
         SyncTags(existingOperation, operationDto.TagIds);
         
         validator.EnsureValid(existingOperation);
         await unitOfWork.CompleteAsync();
     }
 
-    public async Task RemoveAsync(Guid id)
+    public async Task RemoveAsync(Guid id, Guid userId)
     {
-        unitOfWork.FinancialOperations.Remove(await GetEntityByIdAsync(id));
+        unitOfWork.FinancialOperations.Remove(await GetEntityByIdAsync(id, userId));
         await unitOfWork.CompleteAsync();
     }
 
-    private async Task<FinancialOperation> GetEntityByIdAsync(Guid id)
+    private async Task<FinancialOperation> GetEntityByIdAsync(Guid id, Guid userId)
     {
-        return await unitOfWork.FinancialOperations.GetAsync(id) ??
-               throw new KeyNotFoundException($"A {nameof(FinancialOperation)} with ID {id} not found.");
+        return await unitOfWork.FinancialOperations.GetByIdAsync(id, userId) 
+               ?? throw new KeyNotFoundException($"A {nameof(FinancialOperation)} with ID {id} not found.");
     }
 
     private async Task EnsureReferencesExistAsync(FinancialOperationDto operationDto)
