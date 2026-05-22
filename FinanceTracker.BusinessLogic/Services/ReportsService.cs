@@ -9,9 +9,9 @@ namespace FinanceTracker.BusinessLogic.Services;
 
 public class ReportsService(IUnitOfWork unitOfWork, IMapper mapper) : IReportsService
 {
-    public async Task<DailyReportDto> GetDailyReportAsync(DateTime date)
+    public async Task<DailyReportDto> GetDailyReportAsync(DateTime date, Guid userId)
     {
-        var operations = await unitOfWork.FinancialOperations.GetByDateAsync(date);
+        var operations = await unitOfWork.FinancialOperations.GetByDateAsync(date, userId);
         var totalIncome = GetSumForOperationType(operations, OperationType.Income);
         var totalExpenses = GetSumForOperationType(operations, OperationType.Expense);
 
@@ -24,9 +24,9 @@ public class ReportsService(IUnitOfWork unitOfWork, IMapper mapper) : IReportsSe
         };
     }
 
-    public async Task<DatePeriodReportDto> GetDatePeriodReportAsync(DateTime startDate, DateTime endDate)
+    public async Task<DatePeriodReportDto> GetDatePeriodReportAsync(DateTime startDate, DateTime endDate, Guid userId)
     {
-        var operations = await unitOfWork.FinancialOperations.GetByPeriodAsync(startDate, endDate);
+        var operations = await unitOfWork.FinancialOperations.GetByPeriodAsync(startDate, endDate, userId);
         var totalIncome = GetSumForOperationType(operations, OperationType.Income);
         var totalExpenses = GetSumForOperationType(operations, OperationType.Expense);
 

@@ -1,7 +1,6 @@
 ﻿namespace FinanceTracker.API.Contracts.FinancialOperations;
 
 public record FinancialOperationRequest(
-    Guid? UserId,
     Guid CategoryId,
     Guid? BudgetId,
     decimal Amount,

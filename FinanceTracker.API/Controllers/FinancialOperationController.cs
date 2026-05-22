@@ -1,13 +1,16 @@
 ﻿using AutoMapper;
 using FinanceTracker.API.Contracts.FinancialOperations;
+using FinanceTracker.API.Extensions;
 using FinanceTracker.BusinessLogic.DTOs;
 using FinanceTracker.BusinessLogic.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FinanceTracker.API.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
+[Authorize]
 public class FinancialOperationController(IFinancialOperationService financialOperationService, IMapper mapper)
     : ControllerBase
 {
@@ -16,7 +19,10 @@ public class FinancialOperationController(IFinancialOperationService financialOp
     {
         try
         {
-            return Ok(mapper.Map<IEnumerable<FinancialOperationResponse>>(await financialOperationService.GetAllAsync()));
+            var userId = User.GetUserId();
+            var operationDtos = await financialOperationService.GetAllAsync(userId);
+            
+            return Ok(mapper.Map<IEnumerable<FinancialOperationResponse>>(operationDtos));
         }
         catch (Exception ex)
         {
@@ -29,7 +35,10 @@ public class FinancialOperationController(IFinancialOperationService financialOp
     {
         try
         {
-            return Ok(mapper.Map<FinancialOperationResponse>(await financialOperationService.GetByIdAsync(id)));
+            var userId = User.GetUserId();
+            var operationDto = await financialOperationService.GetByIdAsync(id, userId);
+            
+            return Ok(mapper.Map<FinancialOperationResponse>(operationDto));
         }
         catch (KeyNotFoundException ex)
         {
@@ -44,14 +53,19 @@ public class FinancialOperationController(IFinancialOperationService financialOp
     [HttpPost]
     public async Task<IActionResult> CreateAsync([FromBody] FinancialOperationRequest request)
     {
-        if (!ModelState.IsValid) return BadRequest(ModelState);
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(ModelState);
+        }
 
         try
         {
-            var financialOperationDto = mapper.Map<FinancialOperationDto>(request);
-            financialOperationDto.Id = await financialOperationService.AddAsync(financialOperationDto);
-            return CreatedAtAction(nameof(GetById), new { id = financialOperationDto.Id },
-                mapper.Map<FinancialOperationResponse>(financialOperationDto));
+            var userId = User.GetUserId();
+            var operationDto = mapper.Map<FinancialOperationDto>(request);
+            operationDto.Id = await financialOperationService.AddAsync(operationDto, userId);
+            
+            return CreatedAtAction(nameof(GetById), new { id = operationDto.Id },
+                mapper.Map<FinancialOperationResponse>(operationDto));
         }
         catch (KeyNotFoundException ex)
         {
@@ -77,9 +91,11 @@ public class FinancialOperationController(IFinancialOperationService financialOp
         
         try
         {
-            var financialOperationDto = mapper.Map<FinancialOperationDto>(request);
-            financialOperationDto.Id = id;
-            await financialOperationService.UpdateAsync(financialOperationDto);
+            var userId = User.GetUserId();
+            var operationDto = mapper.Map<FinancialOperationDto>(request);
+            operationDto.Id = id;
+            
+            await financialOperationService.UpdateAsync(operationDto, userId);
             return NoContent();
         }
         catch (KeyNotFoundException ex)
@@ -101,7 +117,9 @@ public class FinancialOperationController(IFinancialOperationService financialOp
     {
         try
         {
-            await financialOperationService.RemoveAsync(id);
+            var userId = User.GetUserId();
+            await financialOperationService.RemoveAsync(id, userId);
+            
             return NoContent();
         }
         catch (KeyNotFoundException ex)
