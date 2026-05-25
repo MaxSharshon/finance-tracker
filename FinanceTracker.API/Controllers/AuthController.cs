@@ -25,21 +25,14 @@ public class AuthController(
             return BadRequest(new ValidationProblemDetails(ToValidationErrors(validationResult)));
         }
 
-        try
+        var id = await authService.RegisterAsync(new RegisterDto
         {
-            var id = await authService.RegisterAsync(new RegisterDto
-            {
-                Email = request.Email,
-                Password = request.Password,
-                DisplayName = request.DisplayName
-            });
+            Email = request.Email,
+            Password = request.Password,
+            DisplayName = request.DisplayName
+        });
 
-            return Ok(new { id });
-        }
-        catch (InvalidOperationException ex)
-        {
-            return Conflict(new { message = ex.Message });
-        }
+        return Ok(new { id });
     }
 
     [HttpPost("login")]
