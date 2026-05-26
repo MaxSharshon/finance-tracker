@@ -15,32 +15,18 @@ public class ReportsController(IReportsService reportsService, IMapper mapper) :
     [HttpGet("daily-report")]
     public async Task<IActionResult> GetDailyReportAsync([FromQuery] DateTime date)
     {
-        try
-        {
-            var userId = User.GetUserId();
-            var reportDto = await reportsService.GetDailyReportAsync(date, userId);
-            var response = mapper.Map<DailyReportResponse>(reportDto);
-            return Ok(response);
-        }
-        catch (Exception ex)
-        {
-            return StatusCode(500, $"Internal Server Error: {ex.Message}");
-        }
+        var userId = User.GetUserId();
+        var reportDto = await reportsService.GetDailyReportAsync(date, userId);
+        var response = mapper.Map<DailyReportResponse>(reportDto);
+        return Ok(response);
     }
     
     [HttpGet("date-period-report")]
     public async Task<IActionResult> GetDatePeriodReportAsync([FromQuery] DateTime startDate, [FromQuery] DateTime endDate)
     {
-        try
-        {
-            var userId = User.GetUserId();
-            var reportDto = await reportsService.GetDatePeriodReportAsync(startDate, endDate, userId);
-            var response = mapper.Map<DatePeriodReportResponse>(reportDto);
-            return Ok(response);
-        }
-        catch (Exception ex)
-        {
-            return StatusCode(500, $"Internal Server Error: {ex.Message}");
-        }
+        var userId = User.GetUserId();
+        var reportDto = await reportsService.GetDatePeriodReportAsync(startDate, endDate, userId);
+        var response = mapper.Map<DatePeriodReportResponse>(reportDto);
+        return Ok(response);
     }
 }

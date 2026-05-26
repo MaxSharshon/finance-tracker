@@ -20,5 +20,7 @@ public class BusinessLogicMapper : Profile
             .ForMember(dest => dest.Category, opt => opt.Ignore())
             .ForMember(dest => dest.Budget, opt => opt.Ignore())
             .ForMember(dest => dest.BalanceChange, opt => opt.Ignore());
+        
+        CreateMap<Category, CategoryDto>().ReverseMap();
     }
 }

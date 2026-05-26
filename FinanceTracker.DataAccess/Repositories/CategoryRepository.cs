@@ -8,6 +8,12 @@ public class CategoryRepository(FinanceTrackerContext context) : Repository<Cate
 {
     private FinanceTrackerContext FinanceTrackerContext => (FinanceTrackerContext)Context;
 
+    public async Task<Category?> GetByIdAsync(Guid id, Guid userId)
+    {
+        return await FinanceTrackerContext.Categories
+            .FirstOrDefaultAsync(category => category.Id == id && category.UserId == userId);
+    }
+
     public async Task<IEnumerable<Category>> GetByUserAsync(Guid userId)
     {
         return await FinanceTrackerContext.Categories

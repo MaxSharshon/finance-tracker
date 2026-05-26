@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using FinanceTracker.API.Contracts.BalanceChanges;
+using FinanceTracker.API.Contracts.Categories;
 using FinanceTracker.API.Contracts.FinancialOperations;
 using FinanceTracker.API.Contracts.Reports;
 using FinanceTracker.BusinessLogic.DTOs;
@@ -26,6 +27,14 @@ public class ApiMapper : Profile
         CreateMap<FinancialOperationDto, FinancialOperationResponse>()
             .ForMember(dest => dest.TagIds, 
                 opt => opt.MapFrom(src => src.TagIds));
+
+        CreateMap<CategoryRequest, CategoryDto>()
+            .ForMember(dest => dest.OperationType,
+                opt => opt.MapFrom(src => ConvertOperationType(src.OperationType)));
+
+        CreateMap<CategoryDto, CategoryResponse>()
+            .ForMember(dest => dest.OperationType,
+                opt => opt.MapFrom(src => Enum.GetName(src.OperationType) ?? src.OperationType.ToString()));
         
         CreateMap<DailyReportDto, DailyReportResponse>();
         

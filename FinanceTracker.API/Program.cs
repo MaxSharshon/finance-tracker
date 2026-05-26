@@ -11,6 +11,7 @@ using FinanceTracker.DataAccess.Repositories;
 using FinanceTracker.DataAccess.Repositories.Interfaces;
 using FluentValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 
@@ -31,6 +32,7 @@ builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
 builder.Services.AddScoped<IBalanceChangeService, BalanceChangeService>();
 builder.Services.AddScoped<IFinancialOperationService, FinancialOperationService>();
+builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<IReportsService, ReportsService>();
 
 builder.Services.Configure<JwtOptions>(builder.Configuration.GetSection("Jwt"));
@@ -64,6 +66,39 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
+
+app.UseExceptionHandler(errorApp =>
+{
+    errorApp.Run(async context =>
+    {
+        var exception = context.Features.Get<IExceptionHandlerFeature>()?.Error;
+
+        context.Response.ContentType = "application/json";
+
+        var (statusCode, message) = exception switch
+        {
+            UnauthorizedAccessException => (
+                StatusCodes.Status401Unauthorized,
+                "Unauthorized"),
+
+            KeyNotFoundException => (
+                StatusCodes.Status404NotFound,
+                exception.Message),
+
+            InvalidOperationException => (
+                StatusCodes.Status409Conflict,
+                exception.Message),
+
+            _ => (
+                StatusCodes.Status500InternalServerError,
+                "Internal server error")
+        };
+
+        context.Response.StatusCode = statusCode;
+
+        await context.Response.WriteAsJsonAsync(new { message });
+    });
+});
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
