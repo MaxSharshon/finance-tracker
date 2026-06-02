@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using FinanceTracker.API.Contracts.BalanceChanges;
+using FinanceTracker.API.Contracts.Budgets;
 using FinanceTracker.API.Contracts.Categories;
 using FinanceTracker.API.Contracts.FinancialOperations;
 using FinanceTracker.API.Contracts.Reports;
@@ -44,6 +45,12 @@ public class ApiMapper : Profile
         CreateMap<TagRequest, TagDto>();
         
         CreateMap<TagDto, TagResponse>();
+        
+        CreateMap<BudgetRequest, BudgetDto>();
+
+        CreateMap<BudgetDto, BudgetResponse>();
+        
+        CreateMap<BudgetMemberDto, BudgetMemberResponse>();
     }
 
     private static OperationType ConvertOperationType(string operationType)
