@@ -21,6 +21,7 @@ public class BudgetRepository(FinanceTrackerContext context) : Repository<Budget
     {
         return await FinanceTrackerContext.Budgets
             .Include(budget => budget.BudgetUsers)
+            .ThenInclude(member => member.User)
             .FirstOrDefaultAsync(budget =>
                 budget.Id == id && 
                 (budget.OwnerUserId == userId ||

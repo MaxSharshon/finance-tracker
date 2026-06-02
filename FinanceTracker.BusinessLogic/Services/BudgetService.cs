@@ -20,6 +20,53 @@ public class BudgetService(
         return mapper.Map<IEnumerable<BudgetDto>>(budgets);
     }
     
+    public async Task<IEnumerable<BudgetMemberDto>> GetMembersAsync(Guid budgetId, Guid userId)
+    {
+        var budget = await GetEntityByIdAsync(budgetId, userId);
+        return mapper.Map<IEnumerable<BudgetMemberDto>>(budget.BudgetUsers);
+    }
+
+    public async Task AddMemberAsync(Guid budgetId, Guid memberUserId, Guid userId)
+    {
+        var budget = await GetEntityByIdAsync(budgetId, userId);
+        EnsureOwner(budget, userId);
+
+        if (memberUserId == budget.OwnerUserId)
+        {
+            throw new InvalidOperationException("Budget owner is already a member.");
+        }
+
+        if (await unitOfWork.Users.GetAsync(memberUserId) is null)
+        {
+            throw new KeyNotFoundException($"A {nameof(User)} with ID {memberUserId} not found.");
+        }
+
+        if (budget.BudgetUsers.Any(member => member.UserId == memberUserId))
+        {
+            throw new InvalidOperationException("User is already a member of this budget.");
+        }
+        
+        budget.BudgetUsers.Add(new BudgetUser
+        {
+            BudgetId = budgetId,
+            UserId = memberUserId
+        });
+        
+        await unitOfWork.CompleteAsync();
+    }
+
+    public async Task RemoveMemberAsync(Guid budgetId, Guid memberUserId, Guid userId)
+    {
+        var budget = await GetEntityByIdAsync(budgetId, userId);
+        EnsureOwner(budget, userId);
+        
+        var member = budget.BudgetUsers.FirstOrDefault(member => member.UserId == memberUserId)
+            ?? throw new KeyNotFoundException($"A {nameof(BudgetUser)} with ID {memberUserId} not found.");
+        
+        budget.BudgetUsers.Remove(member);
+        await unitOfWork.CompleteAsync();
+    }
+
     public async Task<BudgetDto> GetByIdAsync(Guid id, Guid userId)
     {
         return mapper.Map<BudgetDto>(await GetEntityByIdAsync(id, userId));

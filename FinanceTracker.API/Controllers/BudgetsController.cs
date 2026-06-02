@@ -69,4 +69,33 @@ public class BudgetsController(IBudgetService budgetService, IMapper mapper) : C
         await budgetService.RemoveAsync(id, userId);
         return NoContent();
     }
+
+    [HttpGet("{id:guid}/members")]
+    public async Task<IActionResult> GetMembers(Guid id)
+    {
+        var userId = User.GetUserId();
+        var members = await budgetService.GetMembersAsync(id, userId);
+        return Ok(mapper.Map<IEnumerable<BudgetMemberResponse>>(members));
+    }
+
+    [HttpPost("{id:guid}/members")]
+    public async Task<IActionResult> AddMember(Guid id, [FromBody] BudgetMemberRequest request)
+    {
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(ModelState);
+        }
+
+        var userId = User.GetUserId();
+        await budgetService.AddMemberAsync(id, request.UserId, userId);
+        return NoContent();
+    }
+
+    [HttpDelete("{id:guid}/members/{memberUserId:guid}")]
+    public async Task<IActionResult> RemoveMember(Guid id, Guid memberUserId)
+    {
+        var userId = User.GetUserId();
+        await budgetService.RemoveMemberAsync(id, memberUserId, userId);
+        return NoContent();
+    }
 }

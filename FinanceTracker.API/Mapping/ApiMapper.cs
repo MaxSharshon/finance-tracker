@@ -49,6 +49,8 @@ public class ApiMapper : Profile
         CreateMap<BudgetRequest, BudgetDto>();
 
         CreateMap<BudgetDto, BudgetResponse>();
+        
+        CreateMap<BudgetMemberDto, BudgetMemberResponse>();
     }
 
     private static OperationType ConvertOperationType(string operationType)
