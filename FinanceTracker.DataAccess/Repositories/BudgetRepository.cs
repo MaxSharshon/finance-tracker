@@ -16,4 +16,14 @@ public class BudgetRepository(FinanceTrackerContext context) : Repository<Budget
             .OrderBy(budget => budget.Name)
             .ToListAsync();
     }
+
+    public async Task<Budget?> GetByIdAsync(Guid id, Guid userId)
+    {
+        return await FinanceTrackerContext.Budgets
+            .Include(budget => budget.BudgetUsers)
+            .FirstOrDefaultAsync(budget =>
+                budget.Id == id && 
+                (budget.OwnerUserId == userId ||
+                budget.BudgetUsers.Any(member => member.UserId == userId)));
+    }
 }

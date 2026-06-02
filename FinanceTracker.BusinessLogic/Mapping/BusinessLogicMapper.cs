@@ -24,5 +24,7 @@ public class BusinessLogicMapper : Profile
         CreateMap<Category, CategoryDto>().ReverseMap();
         
         CreateMap<Tag, TagDto>().ReverseMap();
+        
+        CreateMap<Budget, BudgetDto>().ReverseMap();
     }
 }

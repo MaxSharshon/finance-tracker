@@ -5,4 +5,5 @@ namespace FinanceTracker.DataAccess.Repositories.Interfaces;
 public interface IBudgetRepository : IRepository<Budget>
 {
     Task<IEnumerable<Budget>> GetByUserAsync(Guid userId);
+    Task<Budget?> GetByIdAsync(Guid id, Guid userId);
 }
