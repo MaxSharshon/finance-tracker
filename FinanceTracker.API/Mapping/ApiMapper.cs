@@ -3,6 +3,7 @@ using FinanceTracker.API.Contracts.BalanceChanges;
 using FinanceTracker.API.Contracts.Categories;
 using FinanceTracker.API.Contracts.FinancialOperations;
 using FinanceTracker.API.Contracts.Reports;
+using FinanceTracker.API.Contracts.Tags;
 using FinanceTracker.BusinessLogic.DTOs;
 using FinanceTracker.Core.Enums;
 
@@ -39,6 +40,10 @@ public class ApiMapper : Profile
         CreateMap<DailyReportDto, DailyReportResponse>();
         
         CreateMap<DatePeriodReportDto, DatePeriodReportResponse>();
+        
+        CreateMap<TagRequest, TagDto>();
+        
+        CreateMap<TagDto, TagResponse>();
     }
 
     private static OperationType ConvertOperationType(string operationType)
