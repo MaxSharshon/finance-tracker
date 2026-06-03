@@ -3,6 +3,7 @@ using FinanceTracker.API.Contracts.BalanceChanges;
 using FinanceTracker.API.Contracts.Budgets;
 using FinanceTracker.API.Contracts.Categories;
 using FinanceTracker.API.Contracts.FinancialOperations;
+using FinanceTracker.API.Contracts.Notifications;
 using FinanceTracker.API.Contracts.Reports;
 using FinanceTracker.API.Contracts.Tags;
 using FinanceTracker.BusinessLogic.DTOs;
@@ -51,6 +52,10 @@ public class ApiMapper : Profile
         CreateMap<BudgetDto, BudgetResponse>();
         
         CreateMap<BudgetMemberDto, BudgetMemberResponse>();
+        
+        CreateMap<NotificationRequest, NotificationDto>();
+        
+        CreateMap<NotificationDto, NotificationResponse>();
     }
 
     private static OperationType ConvertOperationType(string operationType)

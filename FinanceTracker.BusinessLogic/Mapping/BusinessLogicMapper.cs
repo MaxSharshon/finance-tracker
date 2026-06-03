@@ -31,5 +31,7 @@ public class BusinessLogicMapper : Profile
             .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.UserId))
             .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.User != null ? src.User.Email : string.Empty))
             .ForMember(dest => dest.DisplayName, opt => opt.MapFrom(src => src.User != null ? src.User.DisplayName : string.Empty));
+        
+        CreateMap<Notification, NotificationDto>().ReverseMap();
     }
 }

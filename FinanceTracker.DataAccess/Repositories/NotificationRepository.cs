@@ -15,4 +15,10 @@ public class NotificationRepository(FinanceTrackerContext context) : Repository<
             .OrderByDescending(notification => notification.CreatedAt)
             .ToListAsync();
     }
+
+    public async Task<Notification?> GetByIdAsync(Guid id, Guid userId)
+    {
+        return await FinanceTrackerContext.Notifications
+            .FirstOrDefaultAsync(notification => notification.Id == id && notification.UserId == userId);
+    }
 }

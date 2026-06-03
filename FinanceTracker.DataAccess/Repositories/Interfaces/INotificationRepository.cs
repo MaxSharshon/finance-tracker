@@ -5,4 +5,5 @@ namespace FinanceTracker.DataAccess.Repositories.Interfaces;
 public interface INotificationRepository : IRepository<Notification>
 {
     Task<IEnumerable<Notification>> GetByUserAsync(Guid userId);
+    Task<Notification?> GetByIdAsync(Guid id, Guid userId);
 }
