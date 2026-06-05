@@ -1,4 +1,5 @@
-﻿using FinanceTracker.Core.Models;
+﻿using FinanceTracker.Core.Enums;
+using FinanceTracker.Core.Models;
 using FinanceTracker.DataAccess.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
@@ -17,6 +18,49 @@ public class FinancialOperationRepository(FinanceTrackerContext context)
     public async Task<IEnumerable<FinancialOperation>> GetAllAsync(Guid userId)
     {
         return await BuildDetailedQuery(userId)
+            .OrderByDescending(operation => operation.Date)
+            .ToListAsync();
+    }
+
+    public async Task<IEnumerable<FinancialOperation>> GetAllAsync(
+        Guid userId,
+        DateTime? startDate,
+        DateTime? endDate,
+        Guid? categoryId,
+        Guid? budgetId,
+        OperationType? operationType)
+    {
+        var query = BuildDetailedQuery(userId);
+
+        if (startDate.HasValue)
+        {
+            query = query.Where(operation => operation.Date >= startDate.Value.Date);
+        }
+
+        if (endDate.HasValue)
+        {
+            var end = endDate.Value.Date.AddDays(1);
+            query = query.Where(operation => operation.Date < end);
+        }
+
+        if (categoryId.HasValue)
+        {
+            query = query.Where(operation => operation.CategoryId == categoryId.Value);
+        }
+
+        if (budgetId.HasValue)
+        {
+            query = query.Where(operation => operation.BudgetId == budgetId.Value);
+        }
+
+        if (operationType.HasValue)
+        {
+            query = query.Where(operation =>
+                operation.Category != null &&
+                operation.Category.OperationType == operationType.Value);
+        }
+
+        return await query
             .OrderByDescending(operation => operation.Date)
             .ToListAsync();
     }

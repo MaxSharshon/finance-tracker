@@ -20,6 +20,19 @@ public class FinancialOperationService(
         return mapper.Map<IEnumerable<FinancialOperationDto>>(operations);
     }
 
+    public async Task<IEnumerable<FinancialOperationDto>> GetAllAsync(Guid userId, FinancialOperationFilterDto filter)
+    {
+        var operations = await unitOfWork.FinancialOperations.GetAllAsync(
+            userId,
+            filter.StartDate,
+            filter.EndDate,
+            filter.CategoryId,
+            filter.BudgetId,
+            filter.OperationType);
+        
+        return mapper.Map<IEnumerable<FinancialOperationDto>>(operations);
+    }
+
     public async Task<FinancialOperationDto> GetByIdAsync(Guid id, Guid userId)
     {
         return mapper.Map<FinancialOperationDto>(await GetEntityByIdAsync(id, userId));
