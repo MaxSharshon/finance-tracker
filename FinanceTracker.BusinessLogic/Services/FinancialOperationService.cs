@@ -27,7 +27,7 @@ public class FinancialOperationService(
 
     public async Task<Guid> AddAsync(FinancialOperationDto operationDto, Guid userId)
     {
-        await EnsureReferencesExistAsync(operationDto);
+        await EnsureReferencesExistAsync(operationDto, userId);
         
         var operation = mapper.Map<FinancialOperation>(operationDto);
         operation.UserId = userId;
@@ -44,7 +44,7 @@ public class FinancialOperationService(
     
     public async Task UpdateAsync(FinancialOperationDto operationDto, Guid userId)
     {
-        await EnsureReferencesExistAsync(operationDto);
+        await EnsureReferencesExistAsync(operationDto, userId);
         
         var existingOperation = await GetEntityByIdAsync(operationDto.Id, userId);
         
@@ -69,21 +69,22 @@ public class FinancialOperationService(
                ?? throw new KeyNotFoundException($"A {nameof(FinancialOperation)} with ID {id} not found.");
     }
 
-    private async Task EnsureReferencesExistAsync(FinancialOperationDto operationDto)
+    private async Task EnsureReferencesExistAsync(FinancialOperationDto operationDto, Guid userId)
     {
-        if (await unitOfWork.Categories.GetAsync(operationDto.CategoryId) is null)
+        if (await unitOfWork.Categories.GetByIdAsync(operationDto.CategoryId, userId) is null)
         {
             throw new KeyNotFoundException($"A {nameof(Category)} with ID {operationDto.CategoryId} not found.");
         }
 
-        if (operationDto.BudgetId.HasValue && await unitOfWork.Budgets.GetAsync(operationDto.BudgetId.Value) is null)
+        if (operationDto.BudgetId.HasValue && 
+            await unitOfWork.Budgets.GetByIdAsync(operationDto.BudgetId.Value, userId) is null)
         {
             throw new KeyNotFoundException($"A {nameof(Budget)} with ID {operationDto.BudgetId.Value} not found.");
         }
         
         foreach (var tagId in operationDto.TagIds.Distinct())
         {
-            if (await unitOfWork.Tags.GetAsync(tagId) is null)
+            if (await unitOfWork.Tags.GetByIdAsync(tagId, userId) is null)
             {
                 throw new KeyNotFoundException($"A {nameof(Tag)} with ID {tagId} not found.");
             }
