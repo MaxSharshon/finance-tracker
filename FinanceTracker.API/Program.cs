@@ -46,7 +46,9 @@ builder.Services.AddValidatorsFromAssemblyContaining<FinancialOperationValidator
 builder.Services.AddValidatorsFromAssemblyContaining<BalanceChangeValidator>();
 builder.Services.AddValidatorsFromAssemblyContaining<RegisterRequestValidator>();
 
-builder.Services.AddAutoMapper(typeof(ApiMapper), typeof(BusinessLogicMapper));
+builder.Services.AddAutoMapper(
+    typeof(FinancialOperationBusinessLogicMappingProfile),
+    typeof(FinancialOperationApiMappingProfile));
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
