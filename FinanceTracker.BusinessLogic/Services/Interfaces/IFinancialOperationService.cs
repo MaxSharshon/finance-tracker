@@ -5,4 +5,5 @@ namespace FinanceTracker.BusinessLogic.Services.Interfaces;
 public interface IFinancialOperationService : IScopedCrudService<FinancialOperationDto, Guid>
 {
     Task<IEnumerable<FinancialOperationDto>> GetAllAsync(Guid userId);
+    Task<IEnumerable<FinancialOperationDto>> GetAllAsync(Guid userId, FinancialOperationFilterDto filter);
 }

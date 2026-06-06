@@ -30,6 +30,8 @@ public class ApiMapper : Profile
         CreateMap<FinancialOperationDto, FinancialOperationResponse>()
             .ForMember(dest => dest.TagIds, 
                 opt => opt.MapFrom(src => src.TagIds));
+        
+        CreateMap<FinancialOperationFilterRequest, FinancialOperationFilterDto>();
 
         CreateMap<CategoryRequest, CategoryDto>()
             .ForMember(dest => dest.OperationType,

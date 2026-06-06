@@ -15,14 +15,15 @@ public class FinancialOperationController(IFinancialOperationService financialOp
     : ControllerBase
 {
     [HttpGet]
-    public async Task<IActionResult> GetAllAsync()
+    public async Task<IActionResult> GetAll([FromQuery] FinancialOperationFilterRequest filter)
     {
         var userId = User.GetUserId();
-        var operationDtos = await financialOperationService.GetAllAsync(userId);
-        
+        var filterDto = mapper.Map<FinancialOperationFilterDto>(filter);
+        var operationDtos = await financialOperationService.GetAllAsync(userId, filterDto);
+
         return Ok(mapper.Map<IEnumerable<FinancialOperationResponse>>(operationDtos));
     }
-    
+
     [HttpGet("{id}")]
     public async Task<IActionResult> GetById(Guid id)
     {
@@ -33,7 +34,7 @@ public class FinancialOperationController(IFinancialOperationService financialOp
     }
 
     [HttpPost]
-    public async Task<IActionResult> CreateAsync([FromBody] FinancialOperationRequest request)
+    public async Task<IActionResult> Create([FromBody] FinancialOperationRequest request)
     {
         if (!ModelState.IsValid)
         {
