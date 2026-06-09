@@ -14,8 +14,5 @@ public class FinancialOperation
     public Budget? Budget { get; set; }
     public decimal Amount { get; set; }
     public string Description { get; set; } = string.Empty;
-    public Guid? BalanceChangeId { get; set; }
-    public BalanceChange? BalanceChange { get; set; }
-
     public ICollection<OperationTag> OperationTags { get; set; } = [];
 }

@@ -16,7 +16,6 @@ public class FinancialOperationBusinessLogicMappingProfile : Profile
             .ForMember(dest => dest.OperationTags, opt => opt.Ignore())
             .ForMember(dest => dest.User, opt => opt.Ignore())
             .ForMember(dest => dest.Category, opt => opt.Ignore())
-            .ForMember(dest => dest.Budget, opt => opt.Ignore())
-            .ForMember(dest => dest.BalanceChange, opt => opt.Ignore());
+            .ForMember(dest => dest.Budget, opt => opt.Ignore());
     }
 }

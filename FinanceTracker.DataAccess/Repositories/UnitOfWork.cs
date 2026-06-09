@@ -9,8 +9,7 @@ public class UnitOfWork(
     ITagRepository tags,
     IBudgetRepository budgets,
     INotificationRepository notifications,
-    IFinancialOperationRepository financialOperations,
-    IBalanceChangeRepository balanceChanges) 
+    IFinancialOperationRepository financialOperations) 
     : IUnitOfWork
 {
     public IUserRepository Users => users;
@@ -19,7 +18,6 @@ public class UnitOfWork(
     public IBudgetRepository Budgets => budgets;
     public INotificationRepository Notifications => notifications;
     public IFinancialOperationRepository FinancialOperations => financialOperations;
-    public IBalanceChangeRepository BalanceChanges => balanceChanges;
 
     public async Task<int> CompleteAsync() => await context.SaveChangesAsync();
 
