@@ -8,7 +8,6 @@ public interface IUnitOfWork : IDisposable
     IBudgetRepository Budgets { get; }
     INotificationRepository Notifications { get; }
     IFinancialOperationRepository FinancialOperations { get; }
-    IBalanceChangeRepository BalanceChanges { get; }
     
     Task<int> CompleteAsync();
 }

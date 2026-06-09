@@ -41,10 +41,5 @@ public class FinancialOperationConfig : IEntityTypeConfiguration<FinancialOperat
             .WithMany(budget => budget.FinancialOperations)
             .HasForeignKey(operation => operation.BudgetId)
             .OnDelete(DeleteBehavior.SetNull);
-
-        builder.HasOne(operation => operation.BalanceChange)
-            .WithOne()
-            .HasForeignKey<FinancialOperation>(operation => operation.BalanceChangeId)
-            .OnDelete(DeleteBehavior.SetNull);
     }
 }

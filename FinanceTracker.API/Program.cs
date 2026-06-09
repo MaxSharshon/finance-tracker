@@ -27,10 +27,8 @@ builder.Services.AddScoped<ITagRepository, TagRepository>();
 builder.Services.AddScoped<IBudgetRepository, BudgetRepository>();
 builder.Services.AddScoped<INotificationRepository, NotificationRepository>();
 builder.Services.AddScoped<IFinancialOperationRepository, FinancialOperationRepository>();
-builder.Services.AddScoped<IBalanceChangeRepository, BalanceChangeRepository>();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
-builder.Services.AddScoped<IBalanceChangeService, BalanceChangeService>();
 builder.Services.AddScoped<IFinancialOperationService, FinancialOperationService>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<ITagService, TagService>();
@@ -43,10 +41,11 @@ builder.Services.AddSingleton<JwtProvider>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 
 builder.Services.AddValidatorsFromAssemblyContaining<FinancialOperationValidator>();
-builder.Services.AddValidatorsFromAssemblyContaining<BalanceChangeValidator>();
 builder.Services.AddValidatorsFromAssemblyContaining<RegisterRequestValidator>();
 
-builder.Services.AddAutoMapper(typeof(ApiMapper), typeof(BusinessLogicMapper));
+builder.Services.AddAutoMapper(
+    typeof(FinancialOperationBusinessLogicMappingProfile),
+    typeof(FinancialOperationApiMappingProfile));
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>

@@ -13,7 +13,6 @@ public class FinanceTrackerContext(DbContextOptions<FinanceTrackerContext> optio
     public DbSet<Budget> Budgets { get; set; }
     public DbSet<BudgetUser> BudgetUsers { get; set; }
     public DbSet<Notification> Notifications { get; set; }
-    public DbSet<BalanceChange> BalanceChanges { get; set; }
     public DbSet<FinancialOperation> FinancialOperations { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -26,8 +25,6 @@ public class FinanceTrackerContext(DbContextOptions<FinanceTrackerContext> optio
         modelBuilder.ApplyConfiguration(new BudgetUserConfig());
         modelBuilder.ApplyConfiguration(new NotificationConfig());
         modelBuilder.ApplyConfiguration(new FinancialOperationConfig());
-        modelBuilder.ApplyConfiguration(new BalanceChangeConfig());
-
         base.OnModelCreating(modelBuilder);
     }
 }
