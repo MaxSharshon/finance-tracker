@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using FinanceTracker.BusinessLogic.DTOs;
+using FinanceTracker.BusinessLogic.DTOs.Reports;
 using FinanceTracker.BusinessLogic.Services.Interfaces;
 using FinanceTracker.Core.Enums;
 using FinanceTracker.Core.Models;

@@ -1,4 +1,4 @@
-﻿using FinanceTracker.BusinessLogic.DTOs;
+﻿using FinanceTracker.BusinessLogic.DTOs.Reports;
 
 namespace FinanceTracker.BusinessLogic.Services.Interfaces;
 
