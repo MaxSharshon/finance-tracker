@@ -7,4 +7,4 @@ public record CategoryReportSummaryResponse(
     string CategoryName,
     OperationType OperationType,
     decimal TotalAmount,
-    int OperationCount);
+    int OperationsCount);

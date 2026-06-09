@@ -8,6 +8,7 @@ public record DatePeriodReportResponse(
     decimal TotalIncome,
     decimal TotalExpenses,
     decimal NetTotal,
+    int OperationsCount,
     IEnumerable<FinancialOperationResponse> Operations,
     IEnumerable<CategoryReportSummaryResponse> Categories,
     IEnumerable<BudgetReportSummaryResponse> Budgets);
