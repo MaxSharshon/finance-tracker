@@ -1,4 +1,4 @@
-﻿namespace FinanceTracker.BusinessLogic.DTOs;
+﻿namespace FinanceTracker.BusinessLogic.DTOs.Reports;
 
 public class DailyReportDto
 {
