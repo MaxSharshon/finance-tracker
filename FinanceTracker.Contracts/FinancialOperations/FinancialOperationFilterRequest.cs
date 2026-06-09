@@ -1,6 +1,6 @@
-using FinanceTracker.Core.Enums;
+using FinanceTracker.Contracts.Enums;
 
-namespace FinanceTracker.API.Contracts.FinancialOperations;
+namespace FinanceTracker.Contracts.FinancialOperations;
 
 public record FinancialOperationFilterRequest(
     DateTime? StartDate,

@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
-using FinanceTracker.API.Contracts.Reports;
 using FinanceTracker.BusinessLogic.DTOs.Reports;
+using FinanceTracker.Contracts.Reports;
 
 namespace FinanceTracker.API.Mapping;
 

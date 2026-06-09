@@ -1,4 +1,4 @@
-using FinanceTracker.API.Contracts.Auth;
+using FinanceTracker.Contracts.Auth;
 using FluentValidation;
 
 namespace FinanceTracker.API.Validators;

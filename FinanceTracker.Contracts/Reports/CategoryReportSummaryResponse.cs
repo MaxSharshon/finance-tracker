@@ -1,10 +1,10 @@
-﻿using FinanceTracker.Core.Enums;
+﻿using FinanceTracker.Contracts.Enums;
 
-namespace FinanceTracker.API.Contracts.Reports;
+namespace FinanceTracker.Contracts.Reports;
 
 public record CategoryReportSummaryResponse(
     Guid CategoryId,
     string CategoryName,
     OperationType OperationType,
     decimal TotalAmount,
-    int OperationCount);
+    int OperationsCount);

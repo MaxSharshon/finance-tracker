@@ -1,6 +1,6 @@
-﻿using FinanceTracker.API.Contracts.FinancialOperations;
+﻿using FinanceTracker.Contracts.FinancialOperations;
 
-namespace FinanceTracker.API.Contracts.Reports;
+namespace FinanceTracker.Contracts.Reports;
 
 public record DatePeriodReportResponse(
     DateTime StartDate,
@@ -8,6 +8,7 @@ public record DatePeriodReportResponse(
     decimal TotalIncome,
     decimal TotalExpenses,
     decimal NetTotal,
+    int OperationsCount,
     IEnumerable<FinancialOperationResponse> Operations,
     IEnumerable<CategoryReportSummaryResponse> Categories,
     IEnumerable<BudgetReportSummaryResponse> Budgets);

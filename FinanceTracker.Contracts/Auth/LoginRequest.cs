@@ -1,3 +1,3 @@
-﻿namespace FinanceTracker.API.Contracts.Auth;
+﻿namespace FinanceTracker.Contracts.Auth;
 
 public record LoginRequest(string Email, string Password);

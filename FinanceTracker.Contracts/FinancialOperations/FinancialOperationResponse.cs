@@ -1,4 +1,4 @@
-namespace FinanceTracker.API.Contracts.FinancialOperations;
+namespace FinanceTracker.Contracts.FinancialOperations;
 
 public record FinancialOperationResponse(
     Guid Id,
