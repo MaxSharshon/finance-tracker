@@ -1,3 +1,3 @@
-﻿namespace FinanceTracker.API.Contracts.Tags;
+﻿namespace FinanceTracker.Contracts.Tags;
 
 public record TagResponse(Guid Id, string Name);

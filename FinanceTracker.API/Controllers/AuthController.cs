@@ -1,7 +1,7 @@
-using FinanceTracker.API.Contracts.Auth;
 using FinanceTracker.API.Services;
 using FinanceTracker.BusinessLogic.DTOs;
 using FinanceTracker.BusinessLogic.Services.Interfaces;
+using FinanceTracker.Contracts.Auth;
 using FluentValidation;
 using FluentValidation.Results;
 using Microsoft.AspNetCore.Mvc;

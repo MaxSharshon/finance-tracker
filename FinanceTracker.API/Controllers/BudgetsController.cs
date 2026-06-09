@@ -1,8 +1,8 @@
 ﻿using AutoMapper;
-using FinanceTracker.API.Contracts.Budgets;
 using FinanceTracker.API.Extensions;
 using FinanceTracker.BusinessLogic.DTOs;
 using FinanceTracker.BusinessLogic.Services.Interfaces;
+using FinanceTracker.Contracts.Budgets;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 

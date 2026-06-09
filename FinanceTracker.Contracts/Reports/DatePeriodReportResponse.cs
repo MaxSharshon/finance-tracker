@@ -1,6 +1,6 @@
-﻿using FinanceTracker.API.Contracts.FinancialOperations;
+﻿using FinanceTracker.Contracts.FinancialOperations;
 
-namespace FinanceTracker.API.Contracts.Reports;
+namespace FinanceTracker.Contracts.Reports;
 
 public record DatePeriodReportResponse(
     DateTime StartDate,

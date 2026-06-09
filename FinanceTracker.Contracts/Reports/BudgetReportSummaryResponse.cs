@@ -1,4 +1,4 @@
-﻿namespace FinanceTracker.API.Contracts.Reports;
+﻿namespace FinanceTracker.Contracts.Reports;
 
 public record BudgetReportSummaryResponse(
     Guid BudgetId,

@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
-using FinanceTracker.API.Contracts.Categories;
 using FinanceTracker.BusinessLogic.DTOs;
+using FinanceTracker.Contracts.Categories;
 using FinanceTracker.Core.Enums;
 
 namespace FinanceTracker.API.Mapping;
