@@ -14,7 +14,6 @@ builder.Services.AddScoped(_ => new HttpClient
                           ?? throw new InvalidOperationException("API base address is not configured."))
 });
 
-builder.Services.AddScoped<IBalanceChangeService, BalanceChangeService>();
 builder.Services.AddScoped<IFinancialOperationService, FinancialOperationService>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<IBudgetService, BudgetService>();
