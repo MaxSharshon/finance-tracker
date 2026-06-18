@@ -1,5 +1,4 @@
 using FinanceTracker.UI.Components;
-using FinanceTracker.UI.Mapper;
 using FinanceTracker.UI.Services;
 using FinanceTracker.UI.Services.Interfaces;
 
@@ -15,11 +14,12 @@ builder.Services.AddScoped(_ => new HttpClient
                           ?? throw new InvalidOperationException("API base address is not configured."))
 });
 
-builder.Services.AddScoped<IBalanceChangeService, BalanceChangeService>();
 builder.Services.AddScoped<IFinancialOperationService, FinancialOperationService>();
+builder.Services.AddScoped<ICategoryService, CategoryService>();
+builder.Services.AddScoped<IBudgetService, BudgetService>();
+builder.Services.AddScoped<ITagService, TagService>();
+builder.Services.AddScoped<INotificationClientService, NotificationClientService>();
 builder.Services.AddScoped<IReportsService, ReportsService>();
-
-builder.Services.AddAutoMapper(typeof(MappingProfile));
 
 var app = builder.Build();
 
