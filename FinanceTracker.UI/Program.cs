@@ -1,5 +1,4 @@
 using FinanceTracker.UI.Components;
-using FinanceTracker.UI.Mapper;
 using FinanceTracker.UI.Services;
 using FinanceTracker.UI.Services.Interfaces;
 
@@ -22,8 +21,6 @@ builder.Services.AddScoped<IBudgetService, BudgetService>();
 builder.Services.AddScoped<ITagService, TagService>();
 builder.Services.AddScoped<INotificationClientService, NotificationClientService>();
 builder.Services.AddScoped<IReportsService, ReportsService>();
-
-builder.Services.AddAutoMapper(typeof(MappingProfile));
 
 var app = builder.Build();
 
