@@ -1,4 +1,4 @@
-﻿using FinanceTracker.UI.Models;
+using FinanceTracker.Contracts.Reports;
 
 namespace FinanceTracker.UI.Services.Interfaces;
 
