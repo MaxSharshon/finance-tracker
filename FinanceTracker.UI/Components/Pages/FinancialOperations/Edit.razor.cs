@@ -22,6 +22,7 @@ public partial class Edit
     [Inject] private ICategoryService CategoryService { get; set; } = null!;
     [Inject] private IBudgetService BudgetService { get; set; } = null!;
     [Inject] private ITagService TagService { get; set; } = null!;
+    [Inject] private INotificationRefreshService NotificationRefreshService { get; set; } = null!;
     [Inject] private NavigationManager NavigationManager { get; set; } = null!;
 
     protected override async Task OnInitializedAsync()
@@ -97,6 +98,7 @@ public partial class Edit
 
             if (response.IsSuccessStatusCode)
             {
+                await NotificationRefreshService.RequestRefreshAsync();
                 GoToListing();
                 return;
             }
