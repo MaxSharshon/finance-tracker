@@ -1,7 +1,111 @@
 ﻿@page "/"
 
-<PageTitle>Home</PageTitle>
+<PageTitle>Dashboard</PageTitle>
 
-<h1>Hello, world!</h1>
+<div class="page-head">
+    <div>
+        <span class="eyebrow">Overview</span>
+        <h1>Dashboard</h1>
+    </div>
+    <span class="badge">@_periodStart.ToString("MMM d") - @_periodEnd.ToString("MMM d")</span>
+</div>
 
-Welcome to your new app.
+@if (!string.IsNullOrWhiteSpace(_errorMessage))
+{
+    <p class="validation-message">@_errorMessage</p>
+}
+
+<section class="stats-grid">
+    <div class="stat-card">
+        <div class="stat-label">Current balance</div>
+        <div class="stat-value">@FormatMoney(CurrentBalance)</div>
+        <div class="stat-note">For selected period</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-label">Income</div>
+        <div class="stat-value income">@FormatMoney(MonthlyIncome)</div>
+        <div class="stat-note">@IncomeOperationCount operations</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-label">Expenses</div>
+        <div class="stat-value expense">@FormatMoney(MonthlyExpenses)</div>
+        <div class="stat-note">@ExpenseOperationCount operations</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-label">Budgets near limit</div>
+        <div class="stat-value">@BudgetsNearLimitCount</div>
+        <div class="stat-note">Usage above 80%</div>
+    </div>
+</section>
+
+<section class="split-grid">
+    <div class="panel">
+        <div class="panel-header">
+            <h2>Recent operations</h2>
+            <a class="btn btn-secondary" href="financial-operations">Open list</a>
+        </div>
+
+        @if (_isLoading)
+        {
+            <div class="empty-state">Loading dashboard...</div>
+        }
+        else if (!RecentOperations.Any())
+        {
+            <div class="empty-state">No operations for this period.</div>
+        }
+        else
+        {
+            <table class="data-table">
+                <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Description</th>
+                    <th>Category</th>
+                    <th>Amount</th>
+                </tr>
+                </thead>
+                <tbody>
+                @foreach (var operation in RecentOperations)
+                {
+                    var type = GetOperationType(operation.CategoryId);
+                    <tr>
+                        <td>@operation.Date.ToShortDateString()</td>
+                        <td>@operation.Description</td>
+                        <td><span class="badge @GetCategoryBadgeClass(type)">@GetCategoryName(operation.CategoryId)</span></td>
+                        <td class="@GetAmountClass(type)">@FormatSignedMoney(operation.Amount, type)</td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        }
+    </div>
+
+    <div class="panel">
+        <div class="panel-header">
+            <h2>Budget usage</h2>
+            <a class="btn btn-secondary" href="budgets">Manage</a>
+        </div>
+
+        @if (!BudgetUsageItems.Any())
+        {
+            <div class="empty-state">No budgets yet.</div>
+        }
+        else
+        {
+            <div class="budget-list">
+                @foreach (var item in BudgetUsageItems)
+                {
+                    <div class="budget-row">
+                        <div>
+                            <strong>@item.Name</strong>
+                            <small>@FormatMoney(item.Spent) / @FormatMoney(item.Limit)</small>
+                        </div>
+                        <div class="progress">
+                            <span style="width:@item.UsagePercent%"></span>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+    </div>
+</section>
