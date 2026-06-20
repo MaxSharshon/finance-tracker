@@ -143,6 +143,7 @@ body {
     position: relative;
 }
 
+.icon-button,
 .menu-item,
 .account-button,
 .auth-link {
@@ -152,6 +153,15 @@ body {
     color: var(--text);
     cursor: pointer;
     text-decoration: none;
+}
+
+.icon-button {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
 }
 
 .account-button,
@@ -184,6 +194,17 @@ body {
     font-weight: 900;
 }
 
+.notification-dot {
+    position: absolute;
+    top: 10px;
+    right: 9px;
+    width: 8px;
+    height: 8px;
+    border: 2px solid #fff;
+    border-radius: 999px;
+    background: #dc2626;
+}
+
 .dropdown-panel {
     position: absolute;
     top: calc(100% + 8px);
@@ -206,6 +227,7 @@ body {
     display: block;
 }
 
+.dropdown-head,
 .account-summary {
     display: flex;
     align-items: center;
@@ -215,9 +237,34 @@ body {
     border-bottom: 1px solid var(--line);
 }
 
+.notification-empty,
+.notification-item,
+.dropdown-footer,
+.menu-item {
+    display: flex;
+    padding: 12px 14px;
+}
+
+.notification-item {
+    gap: 10px;
+    text-decoration: none;
+}
+
+.notification-item small,
 .account-summary small {
     display: block;
     color: var(--muted);
+}
+
+.item-icon.warning {
+    color: var(--warning);
+}
+
+.dropdown-footer {
+    border-top: 1px solid var(--line);
+    color: var(--primary);
+    font-weight: 800;
+    text-decoration: none;
 }
 
 a {
@@ -449,6 +496,19 @@ textarea {
 .form-actions.end,
 .actions {
     justify-content: flex-end;
+}
+
+.notification-actions {
+    width: 280px;
+    min-width: 280px;
+}
+
+.notification-actions .btn {
+    flex: 0 0 auto;
+}
+
+.notification-toggle {
+    width: 132px;
 }
 
 .operation-form {

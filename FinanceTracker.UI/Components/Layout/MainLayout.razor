@@ -16,6 +16,42 @@
             {
                 <div class="header-actions">
                     <div class="header-menu">
+                        <button class="icon-button" type="button" aria-label="Notifications">
+                            <span class="bi bi-bell"></span>
+                            @if (UnreadNotificationsCount > 0)
+                            {
+                                <span class="notification-dot"></span>
+                            }
+                        </button>
+                        <div class="dropdown-panel notifications-panel">
+                            <div class="dropdown-head">
+                                <strong>Notifications</strong>
+                                <span class="badge-count">@UnreadNotificationsCount new</span>
+                            </div>
+                            @if (!HeaderNotifications.Any())
+                            {
+                                <div class="notification-empty">No unread notifications.</div>
+                            }
+                            else
+                            {
+                                @foreach (var notification in HeaderNotifications)
+                                {
+                                    <a class="notification-item" href="notifications">
+                                        <span class="item-icon warning">
+                                            <span class="bi bi-bell"></span>
+                                        </span>
+                                        <span>
+                                            <strong>Unread notification</strong>
+                                            <small>@notification.Message</small>
+                                        </span>
+                                    </a>
+                                }
+                            }
+                            <a class="dropdown-footer" href="notifications">View all notifications</a>
+                        </div>
+                    </div>
+
+                    <div class="header-menu">
                         <button class="account-button" type="button" aria-label="Account menu">
                             <span class="user-pill">@UserInitials</span>
                             <span class="account-name">@DisplayUserName</span>

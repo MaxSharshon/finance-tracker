@@ -20,6 +20,7 @@ builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<IBudgetService, BudgetService>();
 builder.Services.AddScoped<ITagService, TagService>();
 builder.Services.AddScoped<INotificationClientService, NotificationClientService>();
+builder.Services.AddScoped<INotificationRefreshService, NotificationRefreshService>();
 builder.Services.AddScoped<IReportsService, ReportsService>();
 
 var app = builder.Build();
