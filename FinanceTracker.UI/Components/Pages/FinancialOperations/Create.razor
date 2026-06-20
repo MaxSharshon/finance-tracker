@@ -1,35 +1,86 @@
 ﻿@page "/financial-operations/create"
 
-<h3>Create New</h3>
+<PageTitle>New financial operation</PageTitle>
 
-<EditForm Model="_newOperation"
-          OnValidSubmit="HandleValidSubmit"
-          FormName="CreateFinancialOperationForm">
-    <DataAnnotationsValidator />
-    <ValidationSummary />
-
+<div class="page-head">
     <div>
-        <label>Date:</label>
-        <InputDate @bind-value="_newOperation.Date" />
-        <ValidationMessage For="() => _newOperation.Date" />
+        <span class="eyebrow">Transactions</span>
+        <h1>New financial operation</h1>
+        <p>Add income or expense to a personal account or shared budget.</p>
     </div>
-    
-    <div>
-        <label>Balance Change:</label>
-        <select @bind="_newOperation.BalanceChangeId">
-            <option value="">-- Select --</option>
-            @foreach (var bc in _unusedBalanceChanges)
-            {
-                <option value="@bc.Id">@bc.OperationType (@bc.Amount)</option>
-            }
-        </select>
-        <ValidationMessage For="() => _newOperation.BalanceChangeId" />
-    </div>
-    
-    <button type="submit">Create</button>
-</EditForm>
+    <button class="btn btn-secondary" @onclick="GoToListing">Back to list</button>
+</div>
 
-@if (!string.IsNullOrEmpty(_errorMessage))
+@if (!string.IsNullOrWhiteSpace(_errorMessage))
 {
-    <p style="color: red">@_errorMessage</p>
+    <p class="validation-message">@_errorMessage</p>
 }
+
+<section class="form-panel operation-form">
+    <div class="panel-header">
+        <h2>Operation details</h2>
+        <span class="badge">Draft</span>
+    </div>
+    <div class="panel-body">
+        <EditForm Model="_operation" OnValidSubmit="HandleValidSubmit" FormName="CreateFinancialOperationForm">
+            <DataAnnotationsValidator />
+            <ValidationSummary />
+
+            <div class="form-grid two">
+                <div class="field">
+                    <label>Date</label>
+                    <InputDate class="input" @bind-Value="_operation.Date" />
+                </div>
+                <div class="field">
+                    <label>Category</label>
+                    <InputSelect class="select" @bind-Value="_operation.CategoryId">
+                        <option value="">Select category</option>
+                        @foreach (var category in _categories)
+                        {
+                            <option value="@category.Id">@category.Name (@category.OperationType)</option>
+                        }
+                    </InputSelect>
+                </div>
+                <div class="field">
+                    <label>Amount</label>
+                    <InputNumber class="input" @bind-Value="_operation.Amount" />
+                </div>
+                <div class="field">
+                    <label>Budget</label>
+                    <InputSelect class="select" @bind-Value="_operation.BudgetId">
+                        <option value="">Personal</option>
+                        @foreach (var budget in _budgets)
+                        {
+                            <option value="@budget.Id">@budget.Name</option>
+                        }
+                    </InputSelect>
+                </div>
+            </div>
+
+            <div class="field tag-field">
+                <label>Tags</label>
+                <div class="tag-picker">
+                    @foreach (var tag in _tags)
+                    {
+                        <label class="tag-option">
+                            <input type="checkbox"
+                                   checked="@_operation.TagIds.Contains(tag.Id)"
+                                   @onchange="args => ToggleTag(tag.Id, (bool)(args.Value ?? false))" />
+                            @tag.Name
+                        </label>
+                    }
+                </div>
+            </div>
+
+            <div class="field">
+                <label>Description</label>
+                <InputTextArea class="textarea" @bind-Value="_operation.Description" />
+            </div>
+            
+            <div class="form-actions end">
+                <button type="button" class="btn btn-secondary" @onclick="GoToListing">Cancel</button>
+                <button type="submit" class="btn btn-primary">Save operation</button>
+            </div>
+        </EditForm>
+    </div>
+</section>
