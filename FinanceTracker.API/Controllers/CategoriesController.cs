@@ -69,4 +69,19 @@ public class CategoriesController(ICategoryService categoryService, IMapper mapp
         await categoryService.RemoveAsync(id, userId);
         return NoContent();
     }
+
+    [HttpPost("suggest")]
+    public async Task<IActionResult> Suggest([FromBody] CategorySuggestionRequest request)
+    {
+        var userId = User.GetUserId();
+        var suggestion = await categoryService.SuggestAsync(
+            userId,
+            request.Description,
+            request.Amount,
+            request.OperationType);
+
+        return suggestion is null
+            ? NoContent()
+            : Ok(mapper.Map<CategorySuggestionResponse>(suggestion));
+    }
 }

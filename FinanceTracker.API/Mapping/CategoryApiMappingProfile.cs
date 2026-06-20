@@ -16,6 +16,10 @@ public class CategoryApiMappingProfile : Profile
         CreateMap<CategoryDto, CategoryResponse>()
             .ForMember(dest => dest.OperationType,
                 opt => opt.MapFrom(src => Enum.GetName(src.OperationType) ?? src.OperationType.ToString()));
+
+        CreateMap<CategorySuggestionDto, CategorySuggestionResponse>()
+            .ForMember(dest => dest.OperationType,
+                opt => opt.MapFrom(src => Enum.GetName(src.OperationType) ?? src.OperationType.ToString()));
     }
 
     private static OperationType ConvertOperationType(string operationType)
