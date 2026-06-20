@@ -519,6 +519,10 @@ textarea {
     margin-top: 16px;
 }
 
+.manual-csv-field {
+    margin-top: 16px;
+}
+
 .suggestion-note {
     margin-top: 14px;
     padding: 10px 12px;

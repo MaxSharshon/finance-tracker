@@ -1,0 +1,144 @@
+﻿@page "/import"
+
+<PageTitle>Import Transactions</PageTitle>
+
+<div class="page-head">
+    <div>
+        <span class="eyebrow">Automation</span>
+        <h1>Import transactions</h1>
+        <p>Upload CSV transactions, preview parsed rows, and apply rule-based categorization before import.</p>
+    </div>
+    <button class="btn btn-primary" disabled="@(!_rows.Any() || _isImporting)" @onclick="ImportAsync">
+        <span class="bi bi-upload"></span> @(_isImporting ? "Importing..." : "Import approved")
+    </button>
+</div>
+
+@if (!string.IsNullOrWhiteSpace(_errorMessage))
+{
+    <p class="validation-message">@_errorMessage</p>
+}
+@if (!string.IsNullOrWhiteSpace(_successMessage))
+{
+    <p class="stat-note">@_successMessage</p>
+}
+
+<section class="split-grid">
+    <div class="form-panel">
+        <div class="panel-header">
+            <h2>Import setup</h2>
+            <span class="badge">CSV MVP</span>
+        </div>
+        <div class="panel-body">
+            <div class="form-grid two">
+                <div class="field">
+                    <label>CSV file</label>
+                    <InputFile class="input" OnChange="LoadFileAsync" accept=".csv,text/csv" />
+                </div>
+                <div class="field">
+                    <label>Target budget</label>
+                    <InputSelect class="select" @bind-Value="_budgetId">
+                        <option value="">Personal</option>
+                        @foreach (var budget in _budgets)
+                        {
+                            <option value="@budget.Id">@budget.Name</option>
+                        }
+                    </InputSelect>
+                </div>
+            </div>
+
+            <div class="field manual-csv-field">
+                <label>Manual CSV input</label>
+                <textarea class="textarea" @bind="_rawCsv" @bind:event="oninput"></textarea>
+            </div>
+
+            <div class="form-actions">
+                <button class="btn btn-secondary" type="button" disabled="@(_isParsing || string.IsNullOrWhiteSpace(_rawCsv))" @onclick="ParseCsvAsync">
+                    @(_isParsing ? "Validating..." : "Validate preview")
+                </button>
+                <button class="btn btn-primary" type="button" disabled="@(!_rows.Any() || _isImporting)" @onclick="ImportAsync">
+                    @(_isImporting ? "Importing..." : "Import")
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="panel">
+        <div class="panel-header">
+            <h2>Import result</h2>
+        </div>
+        <div class="panel-body">
+            <div class="stat-card">
+                <div class="stat-label">Loaded</div>
+                <div class="stat-value">@_rows.Count</div>
+                <div class="stat-note">transactions in preview</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Categorized</div>
+                <div class="stat-value income">@_rows.Count(row => !string.IsNullOrWhiteSpace(row.CategoryId))</div>
+                <div class="stat-note">matched or selected manually</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Needs review</div>
+                <div class="stat-value expense">@_rows.Count(row => string.IsNullOrWhiteSpace(row.CategoryId))</div>
+                <div class="stat-note">category required before import</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="panel">
+    <div class="panel-header">
+        <h2>Preview</h2>
+        <span class="badge">@_rows.Count rows</span>
+    </div>
+
+    @if (!_rows.Any())
+    {
+        <div class="empty-state">Paste CSV or upload a file to generate an import preview.</div>
+    }
+    else
+    {
+        <table class="data-table">
+            <thead>
+            <tr>
+                <th>Date</th>
+                <th>Description</th>
+                <th>Type</th>
+                <th>Amount</th>
+                <th>Category</th>
+                <th>Suggestion</th>
+            </tr>
+            </thead>
+            <tbody>
+            @foreach (var row in _rows)
+            {
+                <tr>
+                    <td>@row.Date.ToShortDateString()</td>
+                    <td>@row.Description</td>
+                    <td><span class="badge @(row.OperationType == "Income" ? "success" : "danger")">@row.OperationType</span></td>
+                    <td class="amount @(row.OperationType == "Income" ? "income" : "expense")">@FormatSignedAmount(row)</td>
+                    <td>
+                        <InputSelect class="select" @bind-Value="row.CategoryId">
+                            <option value="">Select category</option>
+                            @foreach (var category in GetCategories(row.OperationType))
+                            {
+                                <option value="@category.Id">@category.Name</option>
+                            }
+                        </InputSelect>
+                    </td>
+                    <td>
+                        @if (!string.IsNullOrWhiteSpace(row.CategoryId))
+                        {
+                            <span class="stat-note">@row.SuggestionText</span>
+                        }
+                        else
+                        {
+                            <span class="validation-message">Needs review</span>
+                        }
+                    </td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    }
+</section>
