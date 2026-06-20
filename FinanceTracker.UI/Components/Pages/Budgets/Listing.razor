@@ -1,0 +1,195 @@
+﻿@page "/budgets"
+
+<PageTitle>Budgets</PageTitle>
+
+<div class="page-head">
+    <div>
+        <span class="eyebrow">Shared planning</span>
+        <h1>Budgets</h1>
+        <p>Monitor budget limits, periods, and members for personal or shared spending.</p>
+    </div>
+    <button class="btn btn-primary" @onclick="StartCreate"><span class="bi bi-plus-lg"></span> New budget</button>
+</div>
+
+@if (!string.IsNullOrWhiteSpace(_errorMessage))
+{
+    <p class="validation-message">@_errorMessage</p>
+}
+@if (!string.IsNullOrWhiteSpace(_successMessage))
+{
+    <p class="stat-note">@_successMessage</p>
+}
+
+<section class="stats-grid">
+    <div class="stat-card">
+        <div class="stat-label">Active budgets</div>
+        <div class="stat-value">@_budgets.Count</div>
+        <div class="stat-note">Loaded from API</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-label">Total limit</div>
+        <div class="stat-value">@FormatMoney(_budgets.Sum(budget => budget.LimitAmount ?? 0m))</div>
+        <div class="stat-note">Across all budgets</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-label">With dates</div>
+        <div class="stat-value">@_budgets.Count(budget => budget.StartDate.HasValue || budget.EndDate.HasValue)</div>
+        <div class="stat-note">Period-based budgets</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-label">Without limit</div>
+        <div class="stat-value">@_budgets.Count(budget => !budget.LimitAmount.HasValue)</div>
+        <div class="stat-note">Open-ended budgets</div>
+    </div>
+</section>
+
+<section class="panel">
+    <div class="panel-header">
+        <h2>Budget list</h2>
+        <span class="badge">@_budgets.Count budgets</span>
+    </div>
+
+    @if (_isLoading)
+    {
+        <div class="empty-state">Loading budgets...</div>
+    }
+    else if (_budgets.Count == 0)
+    {
+        <div class="empty-state">No budgets yet.</div>
+    }
+    else
+    {
+        <table class="data-table">
+            <thead>
+            <tr>
+                <th>Budget</th>
+                <th>Limit</th>
+                <th>Start date</th>
+                <th>End date</th>
+                <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            @foreach (var budget in _budgets)
+            {
+                <tr>
+                    <td>@budget.Name</td>
+                    <td>@FormatMoney(budget.LimitAmount)</td>
+                    <td>@FormatDate(budget.StartDate)</td>
+                    <td>@FormatDate(budget.EndDate)</td>
+                    <td class="actions">
+                        <button class="btn btn-secondary" disabled="@_isSaving" @onclick="() => StartEditAsync(budget)">Edit</button>
+                        <button class="btn btn-danger" disabled="@_isSaving" @onclick="() => DeleteAsync(budget.Id)">
+                            @(_deletingId == budget.Id ? "Deleting..." : "Delete")
+                        </button>
+                    </td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    }
+</section>
+
+<section class="form-panel">
+    <div class="panel-header">
+        <h2>@(_editingId.HasValue ? "Edit budget" : "Create budget")</h2>
+    </div>
+    <div class="panel-body">
+        <EditForm Model="_form" OnValidSubmit="SaveAsync" FormName="BudgetForm">
+            <DataAnnotationsValidator />
+            <ValidationSummary />
+
+            <div class="form-grid two">
+                <div class="field">
+                    <label>Name</label>
+                    <InputText class="input" @bind-Value="_form.Name" />
+                </div>
+                <div class="field">
+                    <label>Limit amount</label>
+                    <InputNumber class="input" @bind-Value="_form.LimitAmount" />
+                </div>
+                <div class="field">
+                    <label>Start date</label>
+                    <InputDate class="input" @bind-Value="_form.StartDate" />
+                </div>
+                <div class="field">
+                    <label>End date</label>
+                    <InputDate class="input" @bind-Value="_form.EndDate" />
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <button type="button" class="btn btn-secondary" disabled="@_isSaving" @onclick="StartCreate">Clear</button>
+                <button type="submit" class="btn btn-primary" disabled="@_isSaving">
+                    @(_isSaving ? "Saving..." : "Save budget")
+                </button>
+            </div>
+        </EditForm>
+    </div>
+</section>
+
+@if (_editingId.HasValue)
+{
+    <section class="panel">
+        <div class="panel-header">
+            <h2>Budget members</h2>
+            <span class="badge">@_members.Count members</span>
+        </div>
+        <div class="panel-body">
+            <EditForm Model="_memberForm" OnValidSubmit="AddMemberAsync" FormName="BudgetMemberForm">
+                <DataAnnotationsValidator />
+                <ValidationSummary />
+
+                <div class="form-grid two">
+                    <div class="field">
+                        <label>User id</label>
+                        <InputText class="input" @bind-Value="_memberForm.UserId" />
+                    </div>
+                    <div class="field">
+                        <label>&nbsp;</label>
+                        <button type="submit" class="btn btn-primary" disabled="@_isSaving">
+                            @(_isSaving ? "Saving..." : "Add member")
+                        </button>
+                    </div>
+                </div>
+            </EditForm>
+        </div>
+
+        @if (_isMembersLoading)
+        {
+            <div class="empty-state">Loading members...</div>
+        }
+        else if (_members.Count == 0)
+        {
+            <div class="empty-state">No shared members yet.</div>
+        }
+        else
+        {
+            <table class="data-table">
+                <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>User id</th>
+                    <th></th>
+                </tr>
+                </thead>
+                <tbody>
+                @foreach (var member in _members)
+                {
+                    <tr>
+                        <td>@member.DisplayName</td>
+                        <td>@member.Email</td>
+                        <td>@member.UserId</td>
+                        <td class="actions">
+                            <button class="btn btn-danger" disabled="@_isSaving" @onclick="() => RemoveMemberAsync(member.UserId)">
+                                @(_removingMemberId == member.UserId ? "Removing..." : "Remove")
+                            </button>
+                        </td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        }
+    </section>
+}
