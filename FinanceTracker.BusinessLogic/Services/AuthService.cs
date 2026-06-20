@@ -1,5 +1,6 @@
 ﻿using FinanceTracker.BusinessLogic.DTOs;
 using FinanceTracker.BusinessLogic.Services.Interfaces;
+using FinanceTracker.Core.Enums;
 using FinanceTracker.Core.Models;
 using FinanceTracker.DataAccess.Repositories.Interfaces;
 
@@ -20,10 +21,13 @@ public class AuthService(IUnitOfWork unitOfWork) : IAuthService
             PasswordHash = BCrypt.Net.BCrypt.HashPassword(registerDto.Password),
             DisplayName = registerDto.DisplayName
         };
-        
+
         await unitOfWork.Users.AddAsync(user);
         await unitOfWork.CompleteAsync();
-        
+
+        await AddDefaultCategoriesAsync(user.Id);
+        await unitOfWork.CompleteAsync();
+
         return user.Id;
     }
 
@@ -35,7 +39,25 @@ public class AuthService(IUnitOfWork unitOfWork) : IAuthService
         {
             return null;
         }
-        
+
         return user;
+    }
+
+    private async Task AddDefaultCategoriesAsync(Guid userId)
+    {
+        var categories = new[]
+        {
+            new Category { UserId = userId, Name = "Salary", OperationType = OperationType.Income },
+            new Category { UserId = userId, Name = "Food", OperationType = OperationType.Expense },
+            new Category { UserId = userId, Name = "Transport", OperationType = OperationType.Expense },
+            new Category { UserId = userId, Name = "Home", OperationType = OperationType.Expense },
+            new Category { UserId = userId, Name = "Health", OperationType = OperationType.Expense },
+            new Category { UserId = userId, Name = "Entertainment", OperationType = OperationType.Expense }
+        };
+
+        foreach (var category in categories)
+        {
+            await unitOfWork.Categories.AddAsync(category);
+        }
     }
 }
