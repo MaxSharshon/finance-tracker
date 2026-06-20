@@ -19,7 +19,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddDbContext<FinanceTrackerContext>(options =>
-    options.UseAzureSql(builder.Configuration.GetConnectionString("LocalFinanceTrackerDb")));
+    options.UseSqlServer(builder.Configuration.GetConnectionString("LocalFinanceTrackerDb")));
 
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
@@ -115,5 +115,12 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+
+if (app.Configuration.GetValue<bool>("Database:ApplyMigrations"))
+{
+    using var scope = app.Services.CreateScope();
+    var dbContext = scope.ServiceProvider.GetRequiredService<FinanceTrackerContext>();
+    await dbContext.Database.MigrateAsync();
+}
 
 app.Run();

@@ -10,7 +10,7 @@ builder.Services.AddRazorComponents()
 
 builder.Services.AddScoped(_ => new HttpClient
 {
-    BaseAddress = new Uri(builder.Configuration["ApiSettings:AzureBaseAddress"]
+    BaseAddress = new Uri(builder.Configuration["ApiSettings:LocalBaseAddress"]
                           ?? throw new InvalidOperationException("API base address is not configured."))
 });
 
