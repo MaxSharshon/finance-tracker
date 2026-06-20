@@ -1,23 +1,57 @@
 ﻿@inherits LayoutComponentBase
 
-<div class="page">
-    <div class="sidebar">
-        <NavMenu/>
-    </div>
+<div class="app-shell">
+    <aside class="app-sidebar">
+        <NavMenu />
+    </aside>
 
-    <main>
-        <div class="top-row px-4">
-            <a href="https://learn.microsoft.com/aspnet/core/" target="_blank">About</a>
-        </div>
+    <main class="app-main">
+        <header class="app-header">
+            <div>
+                <span class="eyebrow">Personal finance workspace</span>
+                <strong>FinanceTracker</strong>
+            </div>
 
-        <article class="content px-4">
+            @if (AuthClient.IsAuthenticated)
+            {
+                <div class="header-actions">
+                    <div class="header-menu">
+                        <button class="account-button" type="button" aria-label="Account menu">
+                            <span class="user-pill">@UserInitials</span>
+                            <span class="account-name">@DisplayUserName</span>
+                            <span class="bi bi-chevron-down"></span>
+                        </button>
+                        <div class="dropdown-panel account-panel">
+                            <div class="account-summary">
+                                <span class="user-pill">@UserInitials</span>
+                                <span>
+                                    <strong>@DisplayUserName</strong>
+                                    <small>@DisplayUserEmail</small>
+                                </span>
+                            </div>
+                            <a class="menu-item" href="budgets"><span class="bi bi-people"></span> Shared budgets</a>
+                            <button class="menu-item" type="button" @onclick="SignOut"><span class="bi bi-box-arrow-right"></span> Sign out</button>
+                        </div>
+                    </div>
+                </div>
+            }
+            else
+            {
+                <div class="header-actions">
+                    <a class="auth-link" href="login">Sign in</a>
+                    <a class="auth-link primary" href="register">Create account</a>
+                </div>
+            }
+        </header>
+
+        <section class="app-content">
             @Body
-        </article>
+        </section>
     </main>
 </div>
 
 <div id="blazor-error-ui" data-nosnippet>
     An unhandled error has occurred.
     <a href="." class="reload">Reload</a>
-    <span class="dismiss">🗙</span>
+    <span class="dismiss">x</span>
 </div>

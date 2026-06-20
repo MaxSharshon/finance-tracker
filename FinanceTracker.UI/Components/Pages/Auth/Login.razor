@@ -1,0 +1,42 @@
+﻿@page "/login"
+
+<PageTitle>Sign in</PageTitle>
+
+<div class="page-head">
+    <div>
+        <span class="eyebrow">Access</span>
+        <h1>Sign in</h1>
+        <p>Enter your account credentials to continue to FinanceTracker.</p>
+    </div>
+</div>
+
+<section class="form-panel">
+    <div class="panel-header">
+        <h2>Account login</h2>
+    </div>
+    <div class="panel-body">
+        @if (!string.IsNullOrWhiteSpace(_errorMessage))
+        {
+            <p class="validation-message">@_errorMessage</p>
+        }
+
+        <EditForm Model="_form" OnValidSubmit="HandleLoginAsync" FormName="LoginForm">
+            <DataAnnotationsValidator />
+            <ValidationSummary />
+
+            <div class="field">
+                <label>Email</label>
+                <InputText class="input" @bind-Value="_form.Email" />
+            </div>
+            <br />
+            <div class="field">
+                <label>Password</label>
+                <InputText class="input" type="password" @bind-Value="_form.Password" />
+            </div>
+            <div class="form-actions">
+                <a class="btn btn-secondary" href="register">Create account</a>
+                <button class="btn btn-primary" type="submit">Sign in</button>
+            </div>
+        </EditForm>
+    </div>
+</section>
