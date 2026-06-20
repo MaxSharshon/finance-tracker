@@ -55,7 +55,7 @@ public class AuthController(
             return Unauthorized();
         }
 
-        return Ok(new AuthResponse(jwtProvider.Create(user)));
+        return Ok(new AuthResponse(jwtProvider.Create(user), user.Email, user.DisplayName));
     }
 
     private static Dictionary<string, string[]> ToValidationErrors(ValidationResult validationResult)
