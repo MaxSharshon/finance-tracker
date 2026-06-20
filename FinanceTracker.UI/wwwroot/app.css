@@ -408,6 +408,16 @@ textarea {
     justify-content: flex-end;
 }
 
+.suggestion-note {
+    margin-top: 14px;
+    padding: 10px 12px;
+    border: 1px solid #bfdbfe;
+    border-radius: 6px;
+    background: #eff6ff;
+    color: #1d4ed8;
+    font-weight: 700;
+}
+
 .btn {
     display: inline-flex;
     align-items: center;

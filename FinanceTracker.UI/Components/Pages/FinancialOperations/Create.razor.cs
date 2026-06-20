@@ -13,6 +13,7 @@ public partial class Create
     private List<CategoryResponse> _categories = [];
     private List<BudgetResponse> _budgets = [];
     private List<TagResponse> _tags = [];
+    private string? _suggestionMessage;
     private string? _errorMessage;
 
 
@@ -73,7 +74,58 @@ public partial class Create
             _errorMessage = $"Error creating financial operation: {ex.Message}";
         }
     }
-}
+
+    private async Task SuggestCategoryAsync()
+    {
+        if (string.IsNullOrWhiteSpace(_operation.Description))
+        {
+            _suggestionMessage = null;
+            _errorMessage = "Enter description before category suggestion.";
+            return;
+        }
+
+        var operationType = GetSuggestionOperationType();
+
+        try
+        {
+            _errorMessage = null;
+            _suggestionMessage = null;
+
+            var suggestion = await CategoryService.SuggestAsync(new CategorySuggestionRequest(
+                _operation.Description,
+                _operation.Amount,
+                operationType));
+
+            if (suggestion is null)
+            {
+                _suggestionMessage = "No category suggestion found.";
+                return;
+            }
+
+            _operation.CategoryId = suggestion.CategoryId.ToString();
+            _suggestionMessage = suggestion.MatchedKeyword is null
+                ? $"Suggested category: {suggestion.CategoryName} ({suggestion.Confidence:P0})"
+                : $"Suggested category: {suggestion.CategoryName} ({suggestion.Confidence:P0}, keyword: {suggestion.MatchedKeyword})";
+        }
+        catch (Exception ex)
+        {
+            _errorMessage = $"Failed to suggest category: {ex.Message}";
+        }
+    }
+
+    private string GetSuggestionOperationType()
+    {
+        if (!Guid.TryParse(_operation.CategoryId, out var categoryId))
+        {
+            return "Expense";
+        }
+        
+        var category = _categories.FirstOrDefault(item => item.Id == categoryId);
+
+        return !string.IsNullOrWhiteSpace(category?.OperationType) 
+            ? category.OperationType 
+            : "Expense";
+    }
 
     private void ToggleTag(Guid tagId, bool isSelected)
     {
