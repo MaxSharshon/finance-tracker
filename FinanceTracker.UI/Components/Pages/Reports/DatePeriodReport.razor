@@ -1,43 +1,140 @@
 ﻿@page "/reports/date-period"
+@using FinanceTracker.Contracts.Enums
 
-<h3>Date Period Report</h3>
+<PageTitle>Period Report</PageTitle>
 
-<EditForm Model="_filter"
-          OnValidSubmit="FetchReport"
-          FormName="SetDatePeriodForDatePeriodReportForm">
-    
-    <label>Start Date:</label>
-    <InputDate @bind-Value="_filter.StartDate"/>
+<div class="page-head">
+    <div>
+        <span class="eyebrow">Reports</span>
+        <h1>Period report</h1>
+        <p>Analyze spending patterns by category, budget, and selected date range.</p>
+    </div>
+    <a class="btn btn-secondary" href="reports/daily">Daily report</a>
+</div>
 
-    <label>End Date:</label>
-    <InputDate @bind-Value="_filter.EndDate"/>
-
-    <button type="submit">Generate Report</button>
-</EditForm>
-
-@if (_report is not null)
+@if (!string.IsNullOrWhiteSpace(_errorMessage))
 {
-    <h4>Summary for @_report.StartDate.ToShortDateString() - @_report.EndDate.ToShortDateString()</h4>
-    <p><strong>Total Income: </strong>@_report.TotalIncome</p>
-    <p><strong>Total Expenses: </strong>@_report.TotalExpenses</p>
-    
-    <h5>Operations</h5>
-    if (_report.Operations.Any())
-    {
-        <ul>
-            @foreach (var operation in _report.Operations)
-            {
-                <li>@operation.Date.ToShortDateString() - @operation.BalanceChangeId</li>
-            }
-        </ul>
-    }
-    else
-    {
-        <p>No operations for this date period.</p>
-    }
+    <p class="validation-message">@_errorMessage</p>
 }
 
-@if (!string.IsNullOrEmpty(_errorMessage))
-{
-    <p style="color: red">@_errorMessage</p>
-}
+<section class="panel">
+    <div class="panel-header">
+        <h2>Report parameters</h2>
+        <button class="btn btn-primary" type="submit" form="PeriodReportForm">Generate report</button>
+    </div>
+    <div class="panel-body">
+        <EditForm Model="_form" OnValidSubmit="FetchReport" FormName="PeriodReportForm" id="PeriodReportForm">
+            <div class="form-grid two compact-grid">
+                <div class="field">
+                    <label>Start date</label>
+                    <InputDate class="input" @bind-Value="_form.StartDate" />
+                </div>
+                <div class="field">
+                    <label>End date</label>
+                    <InputDate class="input" @bind-Value="_form.EndDate" />
+                </div>
+            </div>
+        </EditForm>
+    </div>
+</section>
+
+<section class="stats-grid">
+    <div class="stat-card">
+        <div class="stat-label">Total income</div>
+        <div class="stat-value income">@FormatMoney(_report?.TotalIncome ?? 0)</div>
+        <div class="stat-note">Selected period</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-label">Total expenses</div>
+        <div class="stat-value expense">@FormatMoney(_report?.TotalExpenses ?? 0)</div>
+        <div class="stat-note">Selected period</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-label">Net total</div>
+        <div class="stat-value">@FormatMoney(_report?.NetTotal ?? 0)</div>
+        <div class="stat-note">Income minus expenses</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-label">Operations</div>
+        <div class="stat-value">@OperationsCount</div>
+        <div class="stat-note">Loaded from API</div>
+    </div>
+</section>
+
+<section class="split-grid">
+    <div class="panel">
+        <div class="panel-header">
+            <h2>Category summary</h2>
+        </div>
+        @if (_report is null)
+        {
+            <div class="empty-state">Generate report to see category summary.</div>
+        }
+        else if (!_report.Categories.Any())
+        {
+            <div class="empty-state">No category data for selected period.</div>
+        }
+        else
+        {
+            <table class="data-table">
+                <thead>
+                <tr>
+                    <th>Category</th>
+                    <th>Type</th>
+                    <th>Count</th>
+                    <th>Total</th>
+                </tr>
+                </thead>
+                <tbody>
+                @foreach (var category in _report.Categories)
+                {
+                    <tr>
+                        <td>@category.CategoryName</td>
+                        <td><span class="badge @GetBadgeClass(category.OperationType)">@category.OperationType</span></td>
+                        <td>@category.OperationsCount</td>
+                        <td class="@(category.OperationType == OperationType.Income ? "income" : "expense")">@FormatMoney(category.TotalAmount)</td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        }
+    </div>
+
+    <div class="panel">
+        <div class="panel-header">
+            <h2>Budget summary</h2>
+        </div>
+        @if (_report is null)
+        {
+            <div class="empty-state">Generate report to see budget summary.</div>
+        }
+        else if (!_report.Budgets.Any())
+        {
+            <div class="empty-state">No budget data for selected period.</div>
+        }
+        else
+        {
+            <table class="data-table">
+                <thead>
+                <tr>
+                    <th>Budget</th>
+                    <th>Income</th>
+                    <th>Expenses</th>
+                    <th>Net</th>
+                </tr>
+                </thead>
+                <tbody>
+                @foreach (var budget in _report.Budgets)
+                {
+                    <tr>
+                        <td>@budget.BudgetName</td>
+                        <td class="income">@FormatMoney(budget.TotalIncome)</td>
+                        <td class="expense">@FormatMoney(budget.TotalExpenses)</td>
+                        <td class="@GetAmountClass(budget.NetTotal)">@FormatMoney(budget.NetTotal)</td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        }
+    </div>
+</section>

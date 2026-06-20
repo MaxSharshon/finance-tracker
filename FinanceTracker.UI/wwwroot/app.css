@@ -258,17 +258,56 @@ h2 {
     text-transform: uppercase;
 }
 
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 14px;
+    margin-bottom: 18px;
+}
+
 .panel,
+.split-grid,
 .form-panel{
     margin-bottom: 22px;
 }
 
+.stat-card,
 .panel,
 .form-panel {
     border: 1px solid var(--line);
     border-radius: 8px;
     background: var(--panel);
     box-shadow: 0 10px 24px rgba(15, 23, 42, .05);
+}
+
+.stat-card {
+    padding: 16px;
+}
+
+.stat-label,
+.stat-note {
+    color: var(--muted);
+    font-size: .85rem;
+}
+
+.stat-value {
+    margin: 8px 0 4px;
+    font-size: 1.65rem;
+    font-weight: 800;
+}
+
+.income {
+    color: var(--success);
+}
+
+.expense {
+    color: var(--danger);
+}
+
+.split-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.4fr) minmax(320px, .8fr);
+    gap: 18px;
 }
 
 .panel-header {
@@ -357,6 +396,10 @@ h2 {
 
 .form-grid.single {
     grid-template-columns: minmax(240px, 310px);
+}
+
+.compact-grid {
+    max-width: 640px;
 }
 
 .field {
@@ -481,6 +524,41 @@ textarea {
     border-color: var(--danger);
 }
 
+.validation-message {
+    color: var(--danger);
+    font-weight: 700;
+}
+
+.budget-list {
+    display: grid;
+    gap: 14px;
+    padding: 18px;
+}
+
+.budget-row {
+    display: grid;
+    gap: 8px;
+}
+
+.budget-row small {
+    display: block;
+    margin-top: 3px;
+    color: var(--muted);
+}
+
+.progress {
+    height: 8px;
+    overflow: hidden;
+    border-radius: 999px;
+    background: #e2e8f0;
+}
+
+.progress span {
+    display: block;
+    height: 100%;
+    border-radius: inherit;
+    background: var(--primary);
+}
 
 #blazor-error-ui {
     display: none;
