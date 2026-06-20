@@ -1,0 +1,47 @@
+﻿@page "/register"
+
+<PageTitle>Create Account</PageTitle>
+
+<div class="page-head">
+    <div>
+        <span class="eyebrow">Access</span>
+        <h1>Create account</h1>
+        <p>Register a personal workspace with starter categories and budgets.</p>
+    </div>
+</div>
+
+<section class="form-panel">
+    <div class="panel-header">
+        <h2>Registration</h2>
+    </div>
+    <div class="panel-body">
+        @if (!string.IsNullOrWhiteSpace(_message))
+        {
+            <p class="@_messageClass">@_message</p>
+        }
+
+        <EditForm Model="_form" OnValidSubmit="HandleRegisterAsync" FormName="RegisterForm">
+            <DataAnnotationsValidator />
+            <ValidationSummary />
+
+            <div class="form-grid two">
+                <div class="field">
+                    <label>Name</label>
+                    <InputText class="input" @bind-Value="_form.DisplayName" />
+                </div>
+                <div class="field">
+                    <label>Email</label>
+                    <InputText class="input" @bind-Value="_form.Email" />
+                </div>
+                <div class="field">
+                    <label>Password</label>
+                    <InputText class="input" type="password" @bind-Value="_form.Password" />
+                </div>
+            </div>
+            <div class="form-actions">
+                <a class="btn btn-secondary" href="login">Back to login</a>
+                <button class="btn btn-primary" type="submit">Create account</button>
+            </div>
+        </EditForm>
+    </div>
+</section>
