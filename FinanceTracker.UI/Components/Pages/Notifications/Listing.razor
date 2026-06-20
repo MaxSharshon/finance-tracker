@@ -1,0 +1,84 @@
+﻿@page "/notifications"
+
+<PageTitle>Notifications</PageTitle>
+
+<div class="page-head">
+    <div>
+        <span class="eyebrow">Activity</span>
+        <h1>Notifications</h1>
+        <p>Budget alerts, member activity, and system reminders.</p>
+    </div>
+    <button class="btn btn-secondary" @onclick="MarkAllAsReadAsync">Mark all as read</button>
+</div>
+
+<section class="stats-grid">
+    <div class="stat-card">
+        <div class="stat-label">All notifications</div>
+        <div class="stat-value">@_notifications.Count</div>
+        <div class="stat-note">Loaded from API</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-label">Unread</div>
+        <div class="stat-value">@_notifications.Count(notification => !notification.IsRead)</div>
+        <div class="stat-note">Require attention</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-label">Read</div>
+        <div class="stat-value">@_notifications.Count(notification => notification.IsRead)</div>
+        <div class="stat-note">Already reviewed</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-label">Latest</div>
+        <div class="stat-value">@(_notifications.Count == 0 ? "-" : _notifications.Max(n => n.CreatedAt).ToShortDateString())</div>
+        <div class="stat-note">Most recent event</div>
+    </div>
+</section>
+
+<section class="panel">
+    <div class="panel-header">
+        <h2>Recent notifications</h2>
+        <span class="badge warning">@_notifications.Count(notification => !notification.IsRead) unread</span>
+    </div>
+
+    @if (_isLoading)
+    {
+        <div class="empty-state">Loading notifications...</div>
+    }
+    else if (_notifications.Count == 0)
+    {
+        <div class="empty-state">No notifications yet.</div>
+    }
+    else
+    {
+        <table class="data-table">
+            <thead>
+            <tr>
+                <th>Message</th>
+                <th>Source</th>
+                <th>Date</th>
+                <th>Status</th>
+                <th class="actions-column"></th>
+            </tr>
+            </thead>
+            <tbody>
+            @foreach (var notification in _notifications.OrderByDescending(item => item.CreatedAt))
+            {
+                <tr>
+                    <td>@notification.Message</td>
+                    <td><span class="badge">@GetNotificationSource(notification)</span></td>
+                    <td>@notification.CreatedAt.ToShortDateString()</td>
+                    <td><span class="badge @(notification.IsRead ? "" : "warning")">@(notification.IsRead ? "Read" : "Unread")</span></td>
+                    <td class="actions notification-actions">
+                        <button class="btn btn-secondary notification-toggle" disabled="@_isSaving" @onclick="() => ToggleRead(notification)">
+                            @(notification.IsRead ? "Mark unread" : "Mark read")
+                        </button>
+                        <button class="btn btn-danger" disabled="@_isSaving" @onclick="() => DeleteAsync(notification.Id)">
+                            Delete
+                        </button>
+                    </td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    }
+</section>
