@@ -1,0 +1,89 @@
+﻿@page "/tags"
+
+<PageTitle>Tags</PageTitle>
+
+<div class="page-head">
+    <div>
+        <span class="eyebrow">Configuration</span>
+        <h1>Tags</h1>
+        <p>Use tags to mark recurring operations, work expenses, and household costs.</p>
+    </div>
+    <button class="btn btn-primary" @onclick="StartCreate"><span class="bi bi-plus-lg"></span> New tag</button>
+</div>
+
+@if (!string.IsNullOrWhiteSpace(_errorMessage))
+{
+    <p class="validation-message">@_errorMessage</p>
+}
+@if (!string.IsNullOrWhiteSpace(_successMessage))
+{
+    <p class="stat-note">@_successMessage</p>
+}
+
+<section class="panel">
+    <div class="panel-header">
+        <h2>Tag library</h2>
+        <span class="badge">@_tags.Count tags</span>
+    </div>
+
+    @if (_isLoading)
+    {
+        <div class="empty-state">Loading tags...</div>
+    }
+    else if (_tags.Count == 0)
+    {
+        <div class="empty-state">No tags yet.</div>
+    }
+    else
+    {
+        <table class="data-table">
+            <thead>
+            <tr>
+                <th>Name</th>
+                <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            @foreach (var tag in _tags)
+            {
+                <tr>
+                    <td><span class="badge">@tag.Name</span></td>
+                    <td class="actions">
+                        <button class="btn btn-secondary" disabled="@_isSaving" @onclick="() => StartEdit(tag)">Edit</button>
+                        <button class="btn btn-danger" disabled="@_isSaving" @onclick="() => DeleteAsync(tag.Id)">
+                            @(_deletingId == tag.Id ? "Deleting..." : "Delete")
+                        </button>
+                    </td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    }
+</section>
+
+<section class="form-panel">
+    <div class="panel-header">
+        <h2>@(_editingId.HasValue ? "Edit tag" : "Create tag")</h2>
+    </div>
+    <div class="panel-body">
+        <EditForm Model="_form" OnValidSubmit="SaveAsync" FormName="TagForm">
+            <DataAnnotationsValidator />
+            <ValidationSummary />
+
+            <div class="field">
+                <label>Name</label>
+                <InputText class="input" @bind-Value="_form.Name" />
+            </div>
+            <div class="form-actions">
+                @if (_editingId.HasValue)
+                {
+                    <button type="button" class="btn btn-danger" disabled="@_isSaving" @onclick="DeleteSelectedAsync">Delete selected</button>
+                }
+                <button type="button" class="btn btn-secondary" disabled="@_isSaving" @onclick="StartCreate">Clear</button>
+                <button type="submit" class="btn btn-primary" disabled="@_isSaving">
+                    @(_isSaving ? "Saving..." : "Save tag")
+                </button>
+            </div>
+        </EditForm>
+    </div>
+</section>

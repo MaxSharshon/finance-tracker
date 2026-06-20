@@ -1,35 +1,26 @@
-﻿<div class="top-row ps-3 navbar navbar-dark">
-    <div class="container-fluid">
-        <a class="navbar-brand" href="">FinanceTracker.UI</a>
+﻿<div class="brand-block">
+    <div class="brand-mark">FT</div>
+    <div>
+        <a class="brand" href="">FinanceTracker</a>
+        <span>Budget control</span>
     </div>
 </div>
 
-<input type="checkbox" title="Navigation menu" class="navbar-toggler"/>
+<input type="checkbox" title="Navigation menu" class="navbar-toggler" />
 
 <div class="nav-scrollable" onclick="document.querySelector('.navbar-toggler').click()">
-    <nav class="nav flex-column">
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
-                <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span> Home
-            </NavLink>
-        </div>
-
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="financial-operations">
-                <span class="bi bi-cash-coin" aria-hidden="true"></span> Financial Operations
-            </NavLink>
-        </div>
-        
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="reports/daily">
-                <span class="bi bi-calendar-day" aria-hidden="true"></span> Daily Report
-            </NavLink>
-        </div>
-        
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="reports/date-period">
-                <span class="bi bi-calendar-day" aria-hidden="true"></span> Date Period Report
-            </NavLink>
-        </div>
+    <nav class="nav-list">
+        <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
+            <span class="bi bi-speedometer2"></span> Dashboard
+        </NavLink>
+        <NavLink class="nav-link" href="categories">
+            <span class="bi bi-grid"></span> Categories
+        </NavLink>
+        <NavLink class="nav-link" href="tags">
+            <span class="bi bi-tags"></span> Tags
+        </NavLink>
+        <NavLink class="nav-link" href="budgets">
+            <span class="bi bi-wallet2"></span> Budgets
+        </NavLink>
     </nav>
 </div>
