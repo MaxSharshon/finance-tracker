@@ -43,8 +43,8 @@ public class NotificationService(
     {
         var existingNotification = await GetEntityByIdAsync(notificationDto.Id, userId);
 
-        mapper.Map(notificationDto, existingNotification);
-        existingNotification.UserId = userId;
+        existingNotification.Message = notificationDto.Message;
+        existingNotification.IsRead = notificationDto.IsRead;
 
         validator.EnsureValid(existingNotification);
         await unitOfWork.CompleteAsync();
