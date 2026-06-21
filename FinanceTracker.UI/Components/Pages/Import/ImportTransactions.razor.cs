@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Components.Forms;
 
 namespace FinanceTracker.UI.Components.Pages.Import;
 
-public partial class Transactions
+public partial class ImportTransactions
 {
     private const long MaxFileSize = 1024 * 1024;
 
